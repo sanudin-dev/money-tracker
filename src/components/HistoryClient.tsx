@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useConfig } from '@/hooks/useConfig'
-import { formatCurrency } from '@/lib/currency'
+import { formatCurrency, detectDefaultCurrency } from '@/lib/currency'
 import { getExpenses, deleteExpense } from '@/lib/storage'
 import { EditExpenseModal } from '@/components/EditExpenseModal'
 import { SyncBanner } from '@/components/SyncBanner'
@@ -54,6 +54,7 @@ function isCurrentMonth(m: MonthState): boolean {
 
 export function HistoryClient() {
   const { config } = useConfig()
+  const currencyCode = config.currencyCode ?? detectDefaultCurrency()
 
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
@@ -192,7 +193,7 @@ export function HistoryClient() {
               <span>
                 {filtered.length} expense{filtered.length !== 1 ? 's' : ''} ·{' '}
                 <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                  {formatCurrency(monthTotal, config.currencyCode ?? 'USD')}
+                  {formatCurrency(monthTotal, currencyCode)}
                 </span>
               </span>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
@@ -217,7 +218,7 @@ export function HistoryClient() {
                 >
                   <span className="text-sm text-zinc-600 dark:text-zinc-400">{cat}</span>
                   <span className="text-sm font-medium tabular-nums text-zinc-900 dark:text-zinc-100">
-                    {formatCurrency(total, config.currencyCode ?? 'USD')}
+                    {formatCurrency(total, currencyCode)}
                   </span>
                 </div>
               ))}
@@ -254,7 +255,7 @@ export function HistoryClient() {
                   {formatDayHeader(date)}
                 </span>
                 <span className="text-xs font-medium tabular-nums text-zinc-500 dark:text-zinc-400">
-                  {formatCurrency(dayTotal, config.currencyCode ?? 'USD')}
+                  {formatCurrency(dayTotal, currencyCode)}
                 </span>
               </div>
               <div className="flex flex-col gap-1.5">
@@ -275,7 +276,7 @@ export function HistoryClient() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
-                        {formatCurrency(expense.amount, config.currencyCode ?? 'USD')}
+                        {formatCurrency(expense.amount, currencyCode)}
                       </span>
                       <div className="relative">
                         <button

@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useConfig } from '@/hooks/useConfig'
 import { expenseSchema } from '@/lib/schema'
 import { updateExpense } from '@/lib/storage'
-import { formatCurrency, getCurrencyFractionDigits, getCurrencySymbol } from '@/lib/currency'
+import { formatCurrency, getCurrencyFractionDigits, getCurrencySymbol, detectDefaultCurrency } from '@/lib/currency'
 import { evaluateAmount } from '@/lib/math'
 import { CATEGORIES } from '@/lib/categories'
 import type { Expense } from '@/types'
@@ -19,7 +19,7 @@ type Props = {
 
 export function EditExpenseModal({ expense, onSave, onClose }: Props) {
   const { config } = useConfig()
-  const currencyCode = config.currencyCode ?? 'USD'
+  const currencyCode = config.currencyCode ?? detectDefaultCurrency()
   const fractionDigits = useMemo(() => getCurrencyFractionDigits(currencyCode), [currencyCode])
   const currencySymbol = useMemo(() => getCurrencySymbol(currencyCode), [currencyCode])
 

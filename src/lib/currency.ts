@@ -87,7 +87,13 @@ export function getCurrencySymbol(currencyCode: string): string {
   }
 }
 
+// Safari's CLDR data treats IDR as 2 decimal places (ISO 4217 standard) while Chrome
+// uses 0 (practical usage). Hardcode the currencies from our list that are zero-decimal
+// in practice so behaviour is consistent across browsers.
+const ZERO_DECIMAL_CURRENCIES = new Set(['IDR', 'JPY', 'KRW', 'VND'])
+
 export function getCurrencyFractionDigits(currencyCode: string): number {
+  if (ZERO_DECIMAL_CURRENCIES.has(currencyCode)) return 0
   try {
     return new Intl.NumberFormat(undefined, {
       style: 'currency',
