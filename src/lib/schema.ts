@@ -15,8 +15,9 @@ export const configSchema = z.object({
 })
 
 export const expenseSchema = z.object({
-  amount: z.number().positive(),
-  category: z.string().min(1),
+  amount: z.number({ message: 'Enter a valid amount (e.g. 12.50 or 10 + 5)' })
+    .positive({ message: 'Amount must be greater than 0' }),
+  category: z.string().min(1, { message: 'Please select a category' }),
   description: z.string(),
   date: z.string().refine(
     (d) => d <= new Date().toISOString().slice(0, 10),
