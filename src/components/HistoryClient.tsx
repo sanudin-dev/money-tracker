@@ -138,7 +138,7 @@ export function HistoryClient() {
           >
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Delete expense?</p>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              This removes it from your device only — connected integrations won&apos;t be updated.
+              This removes it from your local history only. If Google Sheets is connected, the row stays in your spreadsheet — syncing will bring it back.
             </p>
             <div className="mt-5 flex gap-3">
               <button
@@ -238,7 +238,7 @@ export function HistoryClient() {
             </button>
             <button
               type="button"
-              onClick={() => exportToCsv(expenses)}
+              onClick={() => exportToCsv(filtered, `${selectedMonth.year}-${String(selectedMonth.month).padStart(2, '0')}`)}
               className="rounded-md px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
             >
               Export CSV

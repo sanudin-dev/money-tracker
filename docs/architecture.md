@@ -8,12 +8,12 @@ Local-first expense tracker. All user data lives in the browser (IndexedDB + loc
 
 ## Data flow
 
-1. User submits expense form
+1. User submits expense form (date capped at today — no future dates)
 2. Expense written to **IndexedDB** — always, regardless of integrations
 3. If Zapier configured → `POST /api/zapier` (appends row via webhook)
-4. If Sheets API configured → `POST /api/sheets` (appends row directly)
+4. If Sheets API configured → `POST /api/sheets` → creates `YYYY-MM` tab if needed → appends row
 5. History always reads from IndexedDB
-6. CSV export always available (from IndexedDB)
+6. CSV export scoped to the currently viewed month (from IndexedDB)
 7. Offline: expense saved locally, API call queued per integration in `mt_sync_queue_zapier` / `mt_sync_queue_sheets`; auto-synced on reconnect
 
 ---

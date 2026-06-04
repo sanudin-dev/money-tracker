@@ -28,7 +28,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (!res.ok) {
-    return NextResponse.json({ ok: false, error: `Zapier returned ${res.status}.` }, { status: 502 })
+    const hint = res.status === 404
+      ? 'Zapier webhook not found — make sure your Zap is turned on.'
+      : `Zapier returned ${res.status}.`
+    return NextResponse.json({ ok: false, error: hint }, { status: 502 })
   }
 
   return NextResponse.json({ ok: true })

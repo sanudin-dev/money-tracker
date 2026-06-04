@@ -4,7 +4,7 @@ function escape(value: string): string {
   return `"${value.replace(/"/g, '""')}"`
 }
 
-export function exportToCsv(expenses: Expense[]): void {
+export function exportToCsv(expenses: Expense[], month?: string): void {
   const headers = ['ID', 'Amount', 'Category', 'Description', 'Date', 'Created At']
   const rows = expenses.map((e) =>
     [e.id, String(e.amount), e.category, e.description, e.date, e.createdAt]
@@ -17,7 +17,7 @@ export function exportToCsv(expenses: Expense[]): void {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `expenses-${new Date().toISOString().slice(0, 10)}.csv`
+  a.download = `expenses-${month ?? new Date().toISOString().slice(0, 7)}.csv`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)

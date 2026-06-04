@@ -18,7 +18,10 @@ export const expenseSchema = z.object({
   amount: z.number().positive(),
   category: z.string().min(1),
   description: z.string(),
-  date: z.string(),
+  date: z.string().refine(
+    (d) => d <= new Date().toISOString().slice(0, 10),
+    { message: 'Date cannot be in the future' },
+  ),
 })
 
 export const storedExpenseSchema = expenseSchema.extend({

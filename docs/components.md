@@ -24,7 +24,7 @@
 | Component | File | Owns |
 |---|---|---|
 | `HistoryWrapper` | `HistoryWrapper.tsx` | Thin server-side wrapper. Mounts `HistoryClient`. |
-| `HistoryClient` | `HistoryClient.tsx` | Month navigator, expense list grouped by date, category accordion, three-dot edit/delete menu, CSV export button. Shows a Sheets sync row (via `useSheetsSync`) when Sheets is connected. |
+| `HistoryClient` | `HistoryClient.tsx` | Month navigator, expense list grouped by date, category accordion, three-dot edit/delete menu, CSV export button (exports current month only). Shows a Sheets sync row (via `useSheetsSync`) when Sheets is connected. |
 | `SyncBanner` | `SyncBanner.tsx` | Amber banner showing count of queued offline expenses. Has a manual "Sync now" button. Renders nothing when queue is empty. |
 
 ---

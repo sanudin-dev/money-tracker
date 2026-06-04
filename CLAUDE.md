@@ -183,7 +183,7 @@ The API routes are **thin proxies only**. They:
 ## Expense form behaviour (`/add`)
 
 - Shows active integrations via `IntegrationStatusLine` (from `ModeStatusLine.tsx`)
-- Fields: Amount, Category (select), Date (default today), Description (optional)
+- Fields: Amount, Category (select), Date (default today, capped at today — no future dates), Description (optional)
 - Amount supports arithmetic expressions — `evaluateAmount()` parses `12+8.50` → `20.50`
 - Zero-append buttons (+00, +000, +0000) shown for zero-decimal currencies
 - On submit: validate → save to IndexedDB → push to all active integrations → show status
@@ -197,9 +197,9 @@ The API routes are **thin proxies only**. They:
 - Month navigator to browse past months
 - Category accordion — click total to expand breakdown
 - Expense rows grouped by date with per-day total
-- Three-dot menu per row → **Edit** (opens `EditExpenseModal`) or **Delete** (confirmation)
+- Three-dot menu per row → **Edit** (opens `EditExpenseModal`) or **Delete** (confirmation — warns that syncing will restore from Sheets)
 - Always reads from IndexedDB (no remote fetch)
-- CSV export always available (downloads from IndexedDB)
+- CSV export exports the currently viewed month only (not all-time)
 
 ---
 
@@ -228,6 +228,6 @@ The API routes are **thin proxies only**. They:
 
 ## Next improvements
 
-- Google Sheets monthly tabs — create a new tab per month when writing
-- Notion integration — add as a third `IntegrationType` with database ID + integration token
-- Dark/light theme toggle (currently follows OS setting via `prefers-color-scheme`)
+- **Generic webhook integration** — rename "Zapier" to "Webhook" in the UI; the `/api/zapier` route already accepts any webhook URL (Make, Pipedream, n8n, IFTTT all work today). Add per-platform setup tabs in the guide page alongside the existing Zapier guide.
+- **Notion integration** — add as a third `IntegrationType` with database ID + integration token; write to a Notion database via the Notion API directly (same pattern as Sheets API).
+- **Dark/light theme toggle** — currently follows OS `prefers-color-scheme`; add a manual toggle that persists in `localStorage`.

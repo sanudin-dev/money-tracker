@@ -19,7 +19,7 @@ const COMPARISON_ROWS: Row[] = [
   {
     label: 'Write path',
     zapier: 'POST /api/zapier → validate body → forward to webhook URL',
-    sheets: 'POST /api/sheets → refreshAccessToken() → Google Sheets values.append',
+    sheets: 'POST /api/sheets → refreshAccessToken() → getOrCreateMonthTab (YYYY-MM) → Google Sheets values.append',
   },
   {
     label: 'Read path',
@@ -49,7 +49,7 @@ const COMPARISON_ROWS: Row[] = [
   {
     label: 'Extensibility',
     zapier: 'Limited to what Zapier actions support',
-    sheets: 'Full control — add delete, update, monthly sheet tabs, any Sheets API feature',
+    sheets: 'Full control — add delete, update, any Sheets API feature',
   },
 ]
 

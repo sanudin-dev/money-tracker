@@ -18,8 +18,8 @@ const ROWS: Row[] = [
   },
   {
     label: 'CSV export',
-    zapier: 'Yes — exports your local expense data',
-    sheets: 'Yes — exports your local expense data',
+    zapier: 'Yes — exports the currently viewed month from your local history',
+    sheets: 'Yes — exports the currently viewed month from your local history',
   },
   {
     label: 'Multi-device sync',
