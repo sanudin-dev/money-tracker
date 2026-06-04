@@ -104,20 +104,20 @@ export function ExpenseForm() {
     // the expense is never lost — it's already on the device.
     addExpense(expense)
 
-    const pushZapier = async (): Promise<PushOutcome> => {
-      if (!config.zapier?.webhookUrl) return { ok: true }
+    const pushWebhook = async (): Promise<PushOutcome> => {
+      if (!config.webhook?.webhookUrl) return { ok: true }
       try {
-        const res = await fetch(API.ZAPIER, {
+        const res = await fetch(API.WEBHOOK, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...expense, zapierWebhookUrl: config.zapier.webhookUrl, appId: config.zapier.appId }),
+          body: JSON.stringify({ ...expense, webhookUrl: config.webhook.webhookUrl, appId: config.webhook.appId }),
         })
         const json = (await res.json()) as { ok: boolean; error?: string }
-        if (!json.ok) return { ok: false, error: json.error ?? 'Zapier sync failed.' }
+        if (!json.ok) return { ok: false, error: json.error ?? 'Webhook sync failed.' }
         return { ok: true }
       } catch {
-        if (!navigator.onLine) { enqueueSync(expense.id, 'zapier'); return { ok: false, offline: true } }
-        return { ok: false, error: 'Could not reach Zapier.' }
+        if (!navigator.onLine) { enqueueSync(expense.id, 'webhook'); return { ok: false, offline: true } }
+        return { ok: false, error: 'Could not reach webhook.' }
       }
     }
 
@@ -138,7 +138,7 @@ export function ExpenseForm() {
       }
     }
 
-    const hasIntegrations = !!config.zapier?.webhookUrl || (!!config.sheets?.spreadsheetId && !!config.sheets?.refreshToken)
+    const hasIntegrations = !!config.webhook?.webhookUrl || (!!config.sheets?.spreadsheetId && !!config.sheets?.refreshToken)
 
     if (!hasIntegrations) {
       setStatus({ type: 'success', message: 'Expense saved!' })
@@ -147,12 +147,12 @@ export function ExpenseForm() {
     }
 
     setSubmitting(true)
-    const [zapierResult, sheetsResult] = await Promise.all([pushZapier(), pushSheets()])
+    const [webhookResult, sheetsResult] = await Promise.all([pushWebhook(), pushSheets()])
     setSubmitting(false)
 
-    const allOk = zapierResult.ok && sheetsResult.ok
-    const anyOffline = zapierResult.offline || sheetsResult.offline
-    const apiErrors = [zapierResult, sheetsResult]
+    const allOk = webhookResult.ok && sheetsResult.ok
+    const anyOffline = webhookResult.offline || sheetsResult.offline
+    const apiErrors = [webhookResult, sheetsResult]
       .filter((r): r is PushOutcome & { error: string } => !r.ok && !r.offline && !!r.error)
       .map(r => r.error)
       .join('; ')

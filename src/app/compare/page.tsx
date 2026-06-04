@@ -1,69 +1,69 @@
-type Row = { label: string; zapier: string; sheets: string }
+type Row = { label: string; webhook: string; sheets: string }
 
 const ROWS: Row[] = [
   {
     label: 'Setup (as a user)',
-    zapier: '~5 min — create a Zap, paste the webhook URL in Connect',
+    webhook: '~5 min — create a webhook trigger, paste the URL in Connect',
     sheets: '~2 min — create a Sheet, click Connect Google Sheets',
   },
   {
     label: 'Write expenses',
-    zapier: 'Yes — Zap appends a row on each submission',
+    webhook: 'Yes — automation platform appends a row on each submission',
     sheets: 'Yes — written directly to your Google Sheet via the API',
   },
   {
     label: 'History source',
-    zapier: 'Your local device (IndexedDB)',
+    webhook: 'Your local device (IndexedDB)',
     sheets: 'Your local device (IndexedDB)',
   },
   {
     label: 'CSV export',
-    zapier: 'Yes — exports the currently viewed month from your local history',
+    webhook: 'Yes — exports the currently viewed month from your local history',
     sheets: 'Yes — exports the currently viewed month from your local history',
   },
   {
     label: 'Multi-device sync',
-    zapier: 'Not supported',
+    webhook: 'Not supported',
     sheets: 'Yes — "Sync now" pulls rows from the sheet missing on this device and pushes local expenses not yet in the sheet',
   },
   {
     label: 'Edit / delete',
-    zapier: 'In app — changes stay local; destination not updated',
+    webhook: 'In app — changes stay local; destination not updated',
     sheets: 'In app — changes stay local; destination not updated',
   },
   {
     label: 'Security',
-    zapier: 'Webhook URL is a shared secret — keep it private',
+    webhook: 'Webhook URL is a shared secret — keep it private',
     sheets: 'Google sign-in — only your Google account can access',
   },
   {
     label: 'Flexibility',
-    zapier: 'Swap the destination (Notion, Airtable, Slack) with zero code changes inside your Zap',
+    webhook: 'Swap the destination (Notion, Airtable, Slack) with zero code changes inside your automation',
     sheets: 'Full API control — extend or transform data in code without a third-party platform',
   },
   {
     label: 'Reliability',
-    zapier: 'Adds a third-party hop — Zap failures are logged in Zapier but invisible to the app',
+    webhook: 'Adds a third-party hop — failures are logged in the automation platform but invisible to the app',
     sheets: 'Direct call — failures surface immediately as inline errors; no hidden failure states',
   },
   {
     label: 'Latency',
-    zapier: 'Slightly slower — request travels app → Zapier → Sheets',
+    webhook: 'Slightly slower — request travels app → automation platform → destination',
     sheets: 'Direct — one API call to Google after a token refresh',
   },
   {
     label: 'Price',
-    zapier: '100 tasks/month free; paid plans from $19.99/mo',
+    webhook: 'Varies by platform — Zapier/Make free tiers cover personal use',
     sheets: 'Free — Google Sheets API has no per-request cost for personal use',
   },
   {
     label: 'Vendor lock-in',
-    zapier: 'Tied to Zapier\'s platform and pricing — moving means rebuilding the automation elsewhere',
+    webhook: 'Tied to the automation platform — moving means rebuilding the workflow elsewhere',
     sheets: 'Only depends on Google Sheets API — no third-party automation platform in the write path',
   },
   {
     label: 'Offline',
-    zapier: 'Expense saved to device — queued and synced automatically when back online',
+    webhook: 'Expense saved to device — queued and synced automatically when back online',
     sheets: 'Expense saved to device — queued and synced automatically when back online',
   },
 ]
@@ -79,7 +79,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export const metadata = {
   title: 'Integrations — Money Tracker',
-  description: 'What Zapier and Sheets API each give you — both integrations can be active at the same time.',
+  description: 'What Webhook and Sheets API each give you — both integrations can be active at the same time.',
 }
 
 export default function ComparePage() {
@@ -102,7 +102,7 @@ export default function ComparePage() {
       <div className="min-w-[540px] overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="grid grid-cols-3 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
           <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500"></span>
-          <span className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">Zapier</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">Webhook</span>
           <span className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">Sheets API</span>
         </div>
         {ROWS.map((row, i) => (
@@ -113,24 +113,25 @@ export default function ComparePage() {
             }`}
           >
             <span className="font-medium text-zinc-700 dark:text-zinc-300">{row.label}</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{row.zapier}</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{row.webhook}</span>
             <span className="text-zinc-600 dark:text-zinc-400">{row.sheets}</span>
           </div>
         ))}
       </div>
       </div>
 
-      <Section title="What Zapier gives you">
+      <Section title="What Webhook gives you">
         <p>
-          Zapier turns this app into a trigger for any automation. Expenses land in Google Sheets
-          without signing in or managing a Google account connection — and from there, Zapier can
-          forward the data anywhere: Notion, Airtable, Slack, email, or any app it supports.
+          The webhook integration turns this app into a trigger for any automation platform —
+          Zapier, Make, Pipedream, n8n, or a custom endpoint. Paste a webhook URL and expenses
+          are forwarded there on every submission. From there, the platform can send the data
+          anywhere: Google Sheets, Notion, Airtable, Slack, email, or any app it supports.
         </p>
         <p className="mt-2">
-          It&apos;s also the easiest way to add server-side logic without writing code. Add a
-          free <strong className="text-zinc-700 dark:text-zinc-300">Filter by Zapier</strong>&nbsp;step
-          to check the App ID field and route expenses from different apps to different sheets.
-          Zapier&apos;s free plan covers 100 tasks per month — enough for everyday personal tracking.
+          It&apos;s the easiest way to add server-side logic without writing code. Use the optional
+          App ID field with a filter step in your automation to route expenses from different
+          apps to different destinations. Most platforms offer a free tier that covers everyday
+          personal tracking.
         </p>
       </Section>
 

@@ -2,7 +2,7 @@
 
 ## What this project is
 
-A local-first Next.js PWA for tracking personal expenses. All data lives on-device (IndexedDB). Integrations (Zapier, Sheets API) are independent output channels — both can be active simultaneously, pushing every new expense to all configured destinations. No backend database.
+A local-first Next.js PWA for tracking personal expenses. All data lives on-device (IndexedDB). Integrations (Webhook, Sheets API) are independent output channels — both can be active simultaneously, pushing every new expense to all configured destinations. No backend database.
 
 ---
 
@@ -23,7 +23,7 @@ src/
   app/
     page.tsx                        # Home — expense history list
     add/page.tsx                    # Expense entry form
-    compare/page.tsx                # Integrations — benefits of Zapier and Sheets API
+    compare/page.tsx                # Integrations — webhook vs Sheets API comparison
     install/page.tsx                # PWA install guide (Android / iOS / Desktop)
     dev/page.tsx                    # Developer notes — technical comparison + setup
     privacy/page.tsx                # Privacy policy
@@ -33,7 +33,7 @@ src/
       guide/page.tsx                # Step-by-step setup guide
     api/
       sheets/route.ts               # Server-side proxy for Sheets API calls
-      zapier/route.ts               # Server-side proxy to forward to webhook URL
+      webhook/route.ts              # Server-side proxy to forward to webhook URL
       auth/google/route.ts          # Redirects to Google OAuth consent
       auth/google/callback/route.ts # Exchanges code for tokens, stores via redirect
   components/
@@ -42,12 +42,12 @@ src/
     HistoryWrapper.tsx              # Thin wrapper that mounts HistoryClient
     EditExpenseModal.tsx            # Edit expense modal (centered on all screen sizes)
     SyncBanner.tsx                  # Offline sync queue status banner
-    ConfigForm.tsx                  # Independent Zapier + Sheets API credential panels
+    ConfigForm.tsx                  # Independent Webhook + Sheets API credential panels
     IntegrationRow.tsx              # Active integrations status row (Settings page)
     CurrencyRow.tsx                 # Currency selector row (Settings page)
     ModeStatusLine.tsx              # Exports IntegrationStatusLine — active integrations + manage link
     BottomNav.tsx                   # Mobile bottom tab navigation
-    SetupTabs.tsx                   # Zapier / Sheets setup guide with checklist
+    SetupTabs.tsx                   # Webhook / Sheets setup guide with checklist
     Providers.tsx                   # Wraps ConfigProvider
   lib/
     storage.ts                      # IndexedDB (expenses) + localStorage (config)
@@ -63,7 +63,7 @@ src/
     useConfig.ts                    # Read/write config from localStorage
     useSyncQueue.ts                 # Per-integration offline queues: pendingCount, syncing, processQueue
   types/
-    index.ts                        # IntegrationType, Config, ZapierIntegration, SheetsIntegration, Expense types
+    index.ts                        # IntegrationType, Config, WebhookIntegration, SheetsIntegration, Expense types
 public/
   manifest.json
   icon-192.png
@@ -77,11 +77,11 @@ public/
 ```ts
 // src/types/index.ts
 
-export type IntegrationType = 'zapier' | 'sheets'
+export type IntegrationType = 'webhook' | 'sheets'
 
-export interface ZapierIntegration {
+export interface WebhookIntegration {
   webhookUrl: string
-  appId?: string     // optional; forwarded in every payload for Filter by Zapier
+  appId?: string     // optional; forwarded in every payload for filter steps
 }
 
 export interface SheetsIntegration {
@@ -92,8 +92,8 @@ export interface SheetsIntegration {
 
 export interface Config {
   currencyCode: string
-  zapier?: ZapierIntegration   // present = active
-  sheets?: SheetsIntegration   // present = active
+  webhook?: WebhookIntegration   // present = active
+  sheets?: SheetsIntegration     // present = active
 }
 
 export interface Expense {
@@ -118,12 +118,12 @@ export interface Expense {
 ### Integrations (output channels)
 Integrations are independent. Both can be active simultaneously.
 
-- **Zapier**: `POST /api/zapier` with `{ ...expense, zapierWebhookUrl, appId? }` — Zapier appends the row
+- **Webhook**: `POST /api/webhook` with `{ ...expense, webhookUrl, appId? }` — automation platform handles the row
 - **Sheets API**: `POST /api/sheets` with `{ ...expense, sheetsSpreadsheetId, sheetsRefreshToken }` — direct Google Sheets write
 
 ### Offline handling
 - If offline when submitting, the expense ID is queued per integration:
-  - `mt_sync_queue_zapier` for failed Zapier pushes
+  - `mt_sync_queue_webhook` for failed webhook pushes
   - `mt_sync_queue_sheets` for failed Sheets pushes
 - Each queue is retried independently on reconnect — a prior successful push is never duplicated
 - `SyncBanner` shows total pending count with a "Sync now" button
@@ -137,7 +137,7 @@ Integrations are independent. Both can be active simultaneously.
 // localStorage
 // Key: 'mt_config'               → Partial<Config>
 // Key: 'mt_guide_checklist'      → Record<string, boolean>
-// Key: 'mt_sync_queue_zapier'    → string[]  (expense IDs pending Zapier push)
+// Key: 'mt_sync_queue_webhook'   → string[]  (expense IDs pending webhook push)
 // Key: 'mt_sync_queue_sheets'    → string[]  (expense IDs pending Sheets push)
 
 // IndexedDB — database: 'money-tracker' v1, store: 'expenses'
@@ -175,7 +175,7 @@ The API routes are **thin proxies only**. They:
 ## Settings page layout
 
 - **`/settings`** — hub page: links to Connect, Guide, Install, Integrations, Developer. Inline rows for Integrations and Currency.
-- **`/settings/connect`** — `ConfigForm`: two independent panels (Zapier + Sheets API). Each saves/disconnects independently.
+- **`/settings/connect`** — `ConfigForm`: two independent panels (Webhook + Sheets API). Each saves/disconnects independently.
 - **`/settings/guide`** — `SetupTabs`: step-by-step guide per integration with a persistent checklist
 
 ---
@@ -228,6 +228,6 @@ The API routes are **thin proxies only**. They:
 
 ## Next improvements
 
-- **Generic webhook integration** — rename "Zapier" to "Webhook" in the UI; the `/api/zapier` route already accepts any webhook URL (Make, Pipedream, n8n, IFTTT all work today). Add per-platform setup tabs in the guide page alongside the existing Zapier guide.
+- **Add automation platform setup tabs** — the guide page currently shows a Zapier-specific walkthrough under the Webhook tab; expand it to cover Make, Pipedream, and n8n with their own step-by-step instructions.
 - **Notion integration** — add as a third `IntegrationType` with database ID + integration token; write to a Notion database via the Notion API directly (same pattern as Sheets API).
 - **Dark/light theme toggle** — currently follows OS `prefers-color-scheme`; add a manual toggle that persists in `localStorage`.

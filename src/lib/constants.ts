@@ -1,12 +1,12 @@
 import type { IntegrationType } from '@/types'
 
 export const INTEGRATION_LABELS: Record<IntegrationType, string> = {
-  zapier: 'Zapier',
+  webhook: 'Webhook',
   sheets: 'Sheets API',
 }
 
 export const API = {
-  ZAPIER: '/api/zapier',
+  WEBHOOK: '/api/webhook',
   SHEETS: '/api/sheets',
 } as const
 

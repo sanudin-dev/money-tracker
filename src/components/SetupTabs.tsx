@@ -33,12 +33,12 @@ function Note({ children }: { children: React.ReactNode }) {
   )
 }
 
-const CHECKLIST: Record<'zapier' | 'sheets', string[]> = {
-  zapier: [
-    'Zapier account created (free tier works)',
-    'Zap created with Webhooks by Zapier trigger',
-    'Zap is turned on',
-    'Webhook URL pasted in Settings',
+const CHECKLIST: Record<'webhook' | 'sheets', string[]> = {
+  webhook: [
+    'Automation account created (Zapier free tier works)',
+    'Webhook trigger created and turned on',
+    'Webhook URL copied',
+    'Webhook URL pasted in Settings → Connect',
   ],
   sheets: [
     'Google Sheet created (headers are added automatically on first sync)',
@@ -48,12 +48,11 @@ const CHECKLIST: Record<'zapier' | 'sheets', string[]> = {
   ],
 }
 
-function ZapierSteps() {
+function WebhookSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Expenses are forwarded to a Zapier webhook. Zapier can send the data anywhere — Google Sheets,
-        Notion, Airtable, Slack, or any app it supports. History always shows your local log.
+        Expenses are forwarded to a webhook URL. Any automation platform works — Zapier, Make, Pipedream, n8n, or a custom endpoint. The data can go anywhere the platform supports. History always shows your local log.
       </p>
 
       <Step n={1}>
@@ -146,15 +145,15 @@ function SheetsSteps() {
   )
 }
 
-type Tab = 'zapier' | 'sheets'
+type Tab = 'webhook' | 'sheets'
 
 const TABS: { value: Tab; label: string }[] = [
-  { value: 'zapier', label: INTEGRATION_LABELS.zapier },
+  { value: 'webhook', label: INTEGRATION_LABELS.webhook },
   { value: 'sheets', label: INTEGRATION_LABELS.sheets },
 ]
 
 export function SetupTabs() {
-  const [tab, setTab] = useState<Tab>('zapier')
+  const [tab, setTab] = useState<Tab>('webhook')
   const [checked, setChecked] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {}
     try {
@@ -194,7 +193,7 @@ export function SetupTabs() {
 
       {/* Steps */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-        {tab === 'zapier' ? <ZapierSteps /> : <SheetsSteps />}
+        {tab === 'webhook' ? <WebhookSteps /> : <SheetsSteps />}
       </div>
 
       {/* Checklist */}

@@ -5,7 +5,7 @@ import { useConfig } from '@/hooks/useConfig'
 import { API } from '@/lib/constants'
 import { getConfig, getExpenses } from '@/lib/storage'
 
-type ZapierErrors = Partial<Record<'webhookUrl', string>>
+type WebhookErrors = Partial<Record<'webhookUrl', string>>
 type SheetsErrors = Partial<Record<'spreadsheetId' | 'connection', string>>
 
 function GoogleIcon() {
@@ -22,12 +22,12 @@ function GoogleIcon() {
 export function ConfigForm() {
   const { config, update } = useConfig()
 
-  // Zapier draft — undefined means "use config value"
-  const [zapierOverrides, setZapierOverrides] = useState<Partial<{ webhookUrl: string; appId: string }>>({})
-  const [zapierErrors, setZapierErrors] = useState<ZapierErrors>({})
-  const [zapierSaved, setZapierSaved] = useState(false)
-  const [zapierSyncing, setZapierSyncing] = useState(false)
-  const [zapierSyncResult, setZapierSyncResult] = useState<{ done: number; failed: number } | null>(null)
+  // Webhook draft — undefined means "use config value"
+  const [webhookOverrides, setWebhookOverrides] = useState<Partial<{ webhookUrl: string; appId: string }>>({})
+  const [webhookErrors, setWebhookErrors] = useState<WebhookErrors>({})
+  const [webhookSaved, setWebhookSaved] = useState(false)
+  const [webhookSyncing, setWebhookSyncing] = useState(false)
+  const [webhookSyncResult, setWebhookSyncResult] = useState<{ done: number; failed: number } | null>(null)
 
   // Sheets draft
   const [sheetsOverrides, setSheetsOverrides] = useState<Partial<{ spreadsheetId: string }>>({})
@@ -45,8 +45,8 @@ export function ConfigForm() {
   })
 
   // Resolved display values (override takes priority, then config, then empty)
-  const zapierUrl = zapierOverrides.webhookUrl ?? config.zapier?.webhookUrl ?? ''
-  const zapierAppId = zapierOverrides.appId ?? config.zapier?.appId ?? ''
+  const webhookUrl = webhookOverrides.webhookUrl ?? config.webhook?.webhookUrl ?? ''
+  const webhookAppId = webhookOverrides.appId ?? config.webhook?.appId ?? ''
   const sheetsId = sheetsOverrides.spreadsheetId ?? config.sheets?.spreadsheetId ?? ''
 
   // Process OAuth callback URL params on mount
@@ -59,7 +59,7 @@ export function ConfigForm() {
     if (token) {
       const pendingSid = localStorage.getItem('mt_oauth_sid') ?? config.sheets?.spreadsheetId ?? ''
       localStorage.removeItem('mt_oauth_sid')
-      // Spread getConfig() explicitly so Zapier + currency are preserved even if
+      // Spread getConfig() explicitly so webhook + currency are preserved even if
       // _config hasn't been initialized from localStorage yet during hydration.
       update({
         ...getConfig(),
@@ -90,40 +90,40 @@ export function ConfigForm() {
     setAuthError(null)
   }
 
-  function handleDisconnectZapier() {
-    update({ zapier: undefined })
-    setZapierOverrides({})
-    setZapierSaved(false)
-    setZapierErrors({})
+  function handleDisconnectWebhook() {
+    update({ webhook: undefined })
+    setWebhookOverrides({})
+    setWebhookSaved(false)
+    setWebhookErrors({})
   }
 
-  function handleSaveZapier(e: { preventDefault(): void }) {
+  function handleSaveWebhook(e: { preventDefault(): void }) {
     e.preventDefault()
-    setZapierErrors({})
-    setZapierSaved(false)
+    setWebhookErrors({})
+    setWebhookSaved(false)
 
-    if (!zapierUrl) {
-      setZapierErrors({ webhookUrl: 'Webhook URL is required.' })
+    if (!webhookUrl) {
+      setWebhookErrors({ webhookUrl: 'Webhook URL is required.' })
       return
     }
 
-    update({ zapier: { webhookUrl: zapierUrl, ...(zapierAppId ? { appId: zapierAppId } : {}) } })
-    setZapierOverrides({})
-    setZapierSaved(true)
+    update({ webhook: { webhookUrl, ...(webhookAppId ? { appId: webhookAppId } : {}) } })
+    setWebhookOverrides({})
+    setWebhookSaved(true)
   }
 
-  async function handleSyncAllZapier() {
-    if (!config.zapier || zapierSyncing) return
-    setZapierSyncing(true)
-    setZapierSyncResult(null)
+  async function handleSyncAllWebhook() {
+    if (!config.webhook || webhookSyncing) return
+    setWebhookSyncing(true)
+    setWebhookSyncResult(null)
     const expenses = await getExpenses()
     let done = 0, failed = 0
     for (const expense of expenses) {
       try {
-        const res = await fetch(API.ZAPIER, {
+        const res = await fetch(API.WEBHOOK, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...expense, zapierWebhookUrl: config.zapier.webhookUrl, appId: config.zapier.appId }),
+          body: JSON.stringify({ ...expense, webhookUrl: config.webhook.webhookUrl, appId: config.webhook.appId }),
         })
         const json = await res.json() as { ok: boolean }
         if (json.ok) done++; else failed++
@@ -131,8 +131,8 @@ export function ConfigForm() {
         failed++
       }
     }
-    setZapierSyncing(false)
-    setZapierSyncResult({ done, failed })
+    setWebhookSyncing(false)
+    setWebhookSyncResult({ done, failed })
   }
 
   async function handleSyncAllSheets() {
@@ -180,11 +180,11 @@ export function ConfigForm() {
   return (
     <div className="flex flex-col gap-8">
 
-      {/* ── Zapier ── */}
-      <form onSubmit={handleSaveZapier} className="flex flex-col gap-4">
+      {/* ── Webhook ── */}
+      <form onSubmit={handleSaveWebhook} className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Zapier</h2>
-          {config.zapier && (
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Webhook</h2>
+          {config.webhook && (
             <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
               Active
             </span>
@@ -192,40 +192,40 @@ export function ConfigForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="zapierWebhookUrl" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label htmlFor="webhookUrl" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Webhook URL
           </label>
           <input
-            id="zapierWebhookUrl"
+            id="webhookUrl"
             type="url"
-            placeholder="https://hooks.zapier.com/hooks/catch/…"
-            value={zapierUrl}
-            onChange={(e) => { setZapierOverrides((o) => ({ ...o, webhookUrl: e.target.value })); setZapierSaved(false) }}
+            placeholder="https://hooks.zapier.com/hooks/catch/… or Make/Pipedream/n8n URL"
+            value={webhookUrl}
+            onChange={(e) => { setWebhookOverrides((o) => ({ ...o, webhookUrl: e.target.value })); setWebhookSaved(false) }}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
-          {zapierErrors.webhookUrl && <p className="text-xs text-red-500">{zapierErrors.webhookUrl}</p>}
+          {webhookErrors.webhookUrl && <p className="text-xs text-red-500">{webhookErrors.webhookUrl}</p>}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="zapierAppId" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label htmlFor="webhookAppId" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
             App ID <span className="font-normal text-zinc-400">(optional)</span>
           </label>
           <input
-            id="zapierAppId"
+            id="webhookAppId"
             type="text"
             placeholder="e.g. money-tracker"
-            value={zapierAppId}
-            onChange={(e) => { setZapierOverrides((o) => ({ ...o, appId: e.target.value })); setZapierSaved(false) }}
+            value={webhookAppId}
+            onChange={(e) => { setWebhookOverrides((o) => ({ ...o, appId: e.target.value })); setWebhookSaved(false) }}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
           <p className="text-xs text-zinc-400 dark:text-zinc-500">
-            Included in every payload. Add a <strong className="text-zinc-500 dark:text-zinc-400">Filter by Zapier</strong> step (free) to only run when this value matches — useful if multiple apps share the same Zap.
+            Included in every payload. Use it to filter by source app — e.g. a <strong className="text-zinc-500 dark:text-zinc-400">Filter</strong> step in Zapier or Make.
           </p>
         </div>
 
-        {zapierSaved && (
+        {webhookSaved && (
           <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
-            Zapier settings saved.
+            Webhook settings saved.
           </p>
         )}
 
@@ -236,10 +236,10 @@ export function ConfigForm() {
           >
             Save
           </button>
-          {config.zapier && (
+          {config.webhook && (
             <button
               type="button"
-              onClick={handleDisconnectZapier}
+              onClick={handleDisconnectWebhook}
               className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               Disconnect
@@ -247,22 +247,22 @@ export function ConfigForm() {
           )}
         </div>
 
-        {config.zapier && (
+        {config.webhook && (
           <div className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              <strong className="text-zinc-700 dark:text-zinc-300">Sync local data</strong> — push all expenses saved on this device to Zapier. May create duplicates if some were already synced.
+              <strong className="text-zinc-700 dark:text-zinc-300">Sync local data</strong> — push all expenses saved on this device to the webhook. May create duplicates if some were already synced.
             </p>
             <button
               type="button"
-              onClick={handleSyncAllZapier}
-              disabled={zapierSyncing}
+              onClick={handleSyncAllWebhook}
+              disabled={webhookSyncing}
               className="self-start rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-white disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
             >
-              {zapierSyncing ? 'Syncing…' : 'Sync all expenses'}
+              {webhookSyncing ? 'Syncing…' : 'Sync all expenses'}
             </button>
-            {zapierSyncResult && (
-              <p className={`text-xs ${zapierSyncResult.failed > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-700 dark:text-green-400'}`}>
-                {zapierSyncResult.done} synced{zapierSyncResult.failed > 0 ? `, ${zapierSyncResult.failed} failed` : ''}
+            {webhookSyncResult && (
+              <p className={`text-xs ${webhookSyncResult.failed > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-700 dark:text-green-400'}`}>
+                {webhookSyncResult.done} synced{webhookSyncResult.failed > 0 ? `, ${webhookSyncResult.failed} failed` : ''}
               </p>
             )}
           </div>

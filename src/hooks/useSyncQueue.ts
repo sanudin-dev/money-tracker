@@ -22,7 +22,7 @@ import { API } from '@/lib/constants'
 export function useSyncQueue() {
   const { config } = useConfig()
   const [pendingCount, setPendingCount] = useState(
-    () => getSyncQueue('zapier').length + getSyncQueue('sheets').length
+    () => getSyncQueue('webhook').length + getSyncQueue('sheets').length
   )
   const [syncing, setSyncing] = useState(false)
   // syncingRef guards against concurrent processQueue calls (e.g. rapid 'online' events).
@@ -30,35 +30,35 @@ export function useSyncQueue() {
   const syncingRef = useRef(false)
 
   const refresh = useCallback(() => {
-    setPendingCount(getSyncQueue('zapier').length + getSyncQueue('sheets').length)
+    setPendingCount(getSyncQueue('webhook').length + getSyncQueue('sheets').length)
   }, [])
 
   const processQueue = useCallback(async () => {
     if (syncingRef.current) return
 
-    const zapierPending = config.zapier?.webhookUrl ? getSyncQueue('zapier').length : 0
+    const webhookPending = config.webhook?.webhookUrl ? getSyncQueue('webhook').length : 0
     const sheetsPending = (config.sheets?.spreadsheetId && config.sheets?.refreshToken)
       ? getSyncQueue('sheets').length
       : 0
-    if (zapierPending + sheetsPending === 0) return
+    if (webhookPending + sheetsPending === 0) return
 
     syncingRef.current = true
     setSyncing(true)
 
-    const processZapierQueue = async () => {
-      if (!config.zapier?.webhookUrl) return
-      const zapierConfig = config.zapier
-      for (const id of getSyncQueue('zapier')) {
+    const processWebhookQueue = async () => {
+      if (!config.webhook?.webhookUrl) return
+      const webhookConfig = config.webhook
+      for (const id of getSyncQueue('webhook')) {
         try {
           const expense = await getExpenseById(id)
-          if (!expense) { dequeueSync(id, 'zapier'); continue }
-          const res = await fetch(API.ZAPIER, {
+          if (!expense) { dequeueSync(id, 'webhook'); continue }
+          const res = await fetch(API.WEBHOOK, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...expense, zapierWebhookUrl: zapierConfig.webhookUrl, appId: zapierConfig.appId }),
+            body: JSON.stringify({ ...expense, webhookUrl: webhookConfig.webhookUrl, appId: webhookConfig.appId }),
           })
           const json = (await res.json()) as { ok: boolean }
-          if (json.ok) dequeueSync(id, 'zapier')
+          if (json.ok) dequeueSync(id, 'webhook')
         } catch {
           // Network error — leave remaining items in queue and stop.
           break
@@ -86,7 +86,7 @@ export function useSyncQueue() {
       }
     }
 
-    await Promise.allSettled([processZapierQueue(), processSheetsQueue()])
+    await Promise.allSettled([processWebhookQueue(), processSheetsQueue()])
 
     syncingRef.current = false
     setSyncing(false)

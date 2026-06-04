@@ -1,6 +1,6 @@
 # Money Tracker
 
-Track personal expenses locally with optional sync to Zapier and/or Google Sheets. Works offline. Installable as a PWA on any device.
+Track personal expenses locally with optional sync to a webhook (Zapier, Make, Pipedream, n8n, etc.) and/or Google Sheets. Works offline. Installable as a PWA on any device.
 
 **Live demo → [mt.sanudin.dev](https://mt.sanudin.dev)**
 
@@ -12,7 +12,7 @@ Track personal expenses locally with optional sync to Zapier and/or Google Sheet
 - Browse history by month with per-category breakdown
 - Edit and delete past entries
 - Local-first — data lives on-device (IndexedDB); history always available offline
-- Optional sync to Zapier and/or Google Sheets (both can be active simultaneously)
+- Optional sync to a webhook (Zapier, Make, Pipedream, n8n, etc.) and/or Google Sheets (both can be active simultaneously)
 - Multi-currency support
 - CSV export — always available from local history
 - PWA — install on Android, iOS, or desktop; works fully offline
@@ -24,11 +24,11 @@ Track personal expenses locally with optional sync to Zapier and/or Google Sheet
 
 Both integrations are optional and independent — enable neither, one, or both at the same time.
 
-| | Zapier | Sheets API |
+| | Webhook | Sheets API |
 |---|---|---|
 | Setup | ~5 min | ~2 min |
-| What it does | Sends each expense to any Zapier-connected app | Writes directly to a Google Sheet |
-| Cost | Free tier (100 tasks/mo) | Free |
+| What it does | Sends each expense to any webhook-connected app (Zapier, Make, Pipedream, n8n, etc.) | Writes directly to a Google Sheet |
+| Cost | Depends on platform | Free |
 
 See the [Integrations page](https://mt.sanudin.dev/compare) for details.
 

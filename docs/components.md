@@ -6,7 +6,7 @@
 |---|---|---|
 | `ExpenseForm` | `ExpenseForm.tsx` | Add expense form — amount (with expression eval), category, date, description. Saves to IndexedDB, then pushes to all active integrations concurrently. Renders `SyncBanner` above. |
 | `EditExpenseModal` | `EditExpenseModal.tsx` | Edit an existing expense in a centered modal. |
-| `ConfigForm` | `ConfigForm.tsx` | Zapier webhook URL input and Sheets API OAuth connect button. Saves config to localStorage. |
+| `ConfigForm` | `ConfigForm.tsx` | Webhook URL input and Sheets API OAuth connect button. Saves config to localStorage. |
 
 ---
 
@@ -35,7 +35,7 @@
 |---|---|---|
 | `IntegrationRow` | `IntegrationRow.tsx` | Inline row on the Settings hub showing active integrations + link to `/settings/connect`. |
 | `CurrencyRow` | `CurrencyRow.tsx` | Inline currency selector row on the Settings hub page. |
-| `SetupTabs` | `SetupTabs.tsx` | Zapier / Sheets API step-by-step setup guide with persistent checklist (localStorage). |
+| `SetupTabs` | `SetupTabs.tsx` | Webhook / Sheets API step-by-step setup guide with persistent checklist (localStorage). |
 
 ---
 

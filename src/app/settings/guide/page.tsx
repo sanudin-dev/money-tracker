@@ -2,7 +2,7 @@ import { SetupTabs } from '@/components/SetupTabs'
 
 export const metadata = {
   title: 'Guide — Money Tracker',
-  description: 'Step-by-step setup guide for Zapier and Sheets API integrations.',
+  description: 'Step-by-step setup guide for Webhook and Sheets API integrations.',
 }
 
 export default function GuidePage() {

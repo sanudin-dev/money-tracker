@@ -2,7 +2,7 @@ import { HistoryWrapper } from '@/components/HistoryWrapper'
 
 export const metadata = {
   title: 'Money Tracker',
-  description: 'Track personal expenses locally. Sync to Zapier or Google Sheets. Works offline.',
+  description: 'Track personal expenses locally. Sync via webhook or Google Sheets API. Works offline.',
 }
 
 export default function HomePage() {

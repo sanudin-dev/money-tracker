@@ -29,21 +29,21 @@ Exchanges the OAuth authorisation code for tokens.
 
 ---
 
-## POST /api/zapier
+## POST /api/webhook
 
-Forwards the expense payload to the user's Zapier webhook URL.
+Forwards the expense payload to the user's webhook URL.
 
 **Request body** (validated with Zod):
 
 ```ts
 {
   ...Expense fields,
-  zapierWebhookUrl: string,   // supplied by the client, never stored server-side
-  appId?: string              // optional app identifier; forwarded as-is to Zapier
+  webhookUrl: string,   // supplied by the client, never stored server-side
+  appId?: string        // optional app identifier; forwarded as-is to the webhook
 }
 ```
 
-The `zapierWebhookUrl` is extracted and used as the destination. Everything else — including `appId` if present — is forwarded to Zapier in the request body. Users can add a **Filter by Zapier** step (free) to check `appId`.
+The `webhookUrl` is extracted and used as the destination. Everything else — including `appId` if present — is forwarded in the request body. Users can add a filter step in their automation platform to check `appId`.
 
 ---
 

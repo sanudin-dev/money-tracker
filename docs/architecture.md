@@ -2,7 +2,7 @@
 
 ## Overview
 
-Local-first expense tracker. All user data lives in the browser (IndexedDB + localStorage). Integrations (Zapier, Sheets API) are independent output channels — not modes. Both can be active simultaneously. Server-side API routes are thin proxies only.
+Local-first expense tracker. All user data lives in the browser (IndexedDB + localStorage). Integrations (Webhook, Sheets API) are independent output channels — not modes. Both can be active simultaneously. Server-side API routes are thin proxies only.
 
 ---
 
@@ -10,11 +10,11 @@ Local-first expense tracker. All user data lives in the browser (IndexedDB + loc
 
 1. User submits expense form (date capped at today — no future dates)
 2. Expense written to **IndexedDB** — always, regardless of integrations
-3. If Zapier configured → `POST /api/zapier` (appends row via webhook)
+3. If Webhook configured → `POST /api/webhook` (forwards payload to webhook URL)
 4. If Sheets API configured → `POST /api/sheets` → creates `YYYY-MM` tab if needed → appends row
 5. History always reads from IndexedDB
 6. CSV export scoped to the currently viewed month (from IndexedDB)
-7. Offline: expense saved locally, API call queued per integration in `mt_sync_queue_zapier` / `mt_sync_queue_sheets`; auto-synced on reconnect
+7. Offline: expense saved locally, API call queued per integration in `mt_sync_queue_webhook` / `mt_sync_queue_sheets`; auto-synced on reconnect
 
 ---
 
@@ -23,11 +23,11 @@ Local-first expense tracker. All user data lives in the browser (IndexedDB + loc
 ```ts
 // src/types/index.ts
 
-export type IntegrationType = 'zapier' | 'sheets'
+export type IntegrationType = 'webhook' | 'sheets'
 
-export interface ZapierIntegration {
+export interface WebhookIntegration {
   webhookUrl: string
-  appId?: string     // optional; included in every Zapier payload for Filter by Zapier step
+  appId?: string     // optional; included in every payload for filter steps
 }
 
 export interface SheetsIntegration {
@@ -38,7 +38,7 @@ export interface SheetsIntegration {
 
 export interface Config {
   currencyCode: string
-  zapier?: ZapierIntegration
+  webhook?: WebhookIntegration
   sheets?: SheetsIntegration
 }
 
@@ -59,7 +59,7 @@ An integration is "active" when its object is present in Config. Removing the ob
 ## Sync queue
 
 Per-integration retry queues stored in localStorage:
-- `mt_sync_queue_zapier` — expense IDs that failed to push to Zapier
+- `mt_sync_queue_webhook` — expense IDs that failed to push to the webhook
 - `mt_sync_queue_sheets` — expense IDs that failed to push to Sheets API
 
 Each queue is processed independently on reconnect. A retry only hits the failed integration — a prior successful push is never duplicated.
@@ -101,9 +101,9 @@ Generate a key: `openssl rand -base64 32`
 
 ---
 
-## Zapier App ID
+## Webhook App ID
 
-An optional `appId` string can be set in the Zapier integration config. It is included in every payload sent to the Zapier webhook. Users can add a **Filter by Zapier** step (free tier) to check this value — useful when multiple apps share the same Zap.
+An optional `appId` string can be set in the Webhook integration config. It is included in every payload sent to the webhook URL. Users can add a filter step in their automation platform (e.g. Filter by Zapier, Make filters) to check this value — useful when multiple apps share the same webhook.
 
 ---
 

@@ -34,7 +34,7 @@ const ROWS: Row[] = [
   {
     href: '/settings/connect',
     label: 'Connect',
-    description: 'Set up Zapier or Sheets API credentials',
+    description: 'Set up webhook or Sheets API credentials',
     iconBg: 'bg-blue-500',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className="h-5 w-5">
@@ -67,7 +67,7 @@ const ROWS: Row[] = [
   {
     href: '/compare',
     label: 'Integrations',
-    description: 'See what Zapier and Sheets API each offer',
+    description: 'See what Webhook and Sheets API each offer',
     iconBg: 'bg-violet-500',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className="h-5 w-5">
@@ -137,7 +137,7 @@ export default function SettingsPage() {
       <footer className="flex flex-col items-center gap-1.5 py-4 text-center">
         <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Money Tracker</p>
         <p className="text-xs text-zinc-400 dark:text-zinc-500">
-          Local-first expense tracking. Sync to Zapier or Google Sheets.
+          Local-first expense tracking. Sync via webhook or Google Sheets API.
         </p>
         <div className="flex items-center gap-3">
           <a

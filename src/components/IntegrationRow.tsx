@@ -8,7 +8,7 @@ import { INTEGRATION_LABELS } from '@/lib/constants'
 export function IntegrationRow() {
   const { config } = useConfig()
   const active = [
-    config.zapier?.webhookUrl ? INTEGRATION_LABELS.zapier : null,
+    config.webhook?.webhookUrl ? INTEGRATION_LABELS.webhook : null,
     config.sheets?.spreadsheetId && config.sheets?.refreshToken ? INTEGRATION_LABELS.sheets : null,
   ].filter(Boolean)
 

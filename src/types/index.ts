@@ -1,7 +1,7 @@
 /** The supported integration output channels. Extend this union to add future integrations. */
-export type IntegrationType = 'zapier' | 'sheets'
+export type IntegrationType = 'webhook' | 'sheets'
 
-export interface ZapierIntegration {
+export interface WebhookIntegration {
   webhookUrl: string
   appId?: string
 }
@@ -14,7 +14,7 @@ export interface SheetsIntegration {
 
 export interface Config {
   currencyCode: string
-  zapier?: ZapierIntegration
+  webhook?: WebhookIntegration
   sheets?: SheetsIntegration
 }
 

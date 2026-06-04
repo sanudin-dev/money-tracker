@@ -2,7 +2,7 @@ import { ConfigForm } from '@/components/ConfigForm'
 
 export const metadata = {
   title: 'Connect — Money Tracker',
-  description: 'Connect Zapier or Google Sheets to sync your expenses automatically.',
+  description: 'Connect a webhook or Google Sheets to sync your expenses automatically.',
 }
 
 export default function ConnectPage() {

@@ -1,7 +1,7 @@
 {
   "name": "Money Tracker",
   "short_name": "Money Tracker",
-  "description": "Track personal expenses locally. Sync to Zapier or Google Sheets. Works offline.",
+  "description": "Track personal expenses locally. Sync to a webhook or Google Sheets. Works offline.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

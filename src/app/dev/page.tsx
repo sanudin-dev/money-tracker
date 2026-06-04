@@ -3,52 +3,52 @@ export const metadata = {
   description: 'Technical comparison and one-time server setup guide for deploying Money Tracker.',
 }
 
-type Row = { label: string; zapier: string; sheets: string }
+type Row = { label: string; webhook: string; sheets: string }
 
 const COMPARISON_ROWS: Row[] = [
   {
     label: 'Auth model',
-    zapier: 'None — webhook URL passed in the request body; no server-side secrets needed',
+    webhook: 'None — webhook URL passed in the request body; no server-side secrets needed',
     sheets: 'OAuth 2.0 Authorization Code Flow — GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET in .env.local; refresh token encrypted (AES-256-GCM) and stored in client localStorage',
   },
   {
     label: 'Server credentials',
-    zapier: 'None',
+    webhook: 'None',
     sheets: 'GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ENCRYPTION_KEY (never exposed to the client)',
   },
   {
     label: 'Write path',
-    zapier: 'POST /api/zapier → validate body → forward to webhook URL',
+    webhook: 'POST /api/webhook → validate body → forward to webhook URL',
     sheets: 'POST /api/sheets → refreshAccessToken() → getOrCreateMonthTab (YYYY-MM) → Google Sheets values.append',
   },
   {
     label: 'Read path',
-    zapier: 'Not implemented — fire-and-forget',
+    webhook: 'Not implemented — fire-and-forget',
     sheets: 'GET /api/sheets → refreshAccessToken() → values.get → row parsing; powers bidirectional sync (useSheetsSync)',
   },
   {
     label: 'Token handling',
-    zapier: 'N/A',
+    webhook: 'N/A',
     sheets: 'Server-side only: POST oauth2.googleapis.com/token with refresh_token; client never receives an access_token',
   },
   {
     label: 'API route size',
-    zapier: '~15 lines — validate + proxy',
+    webhook: '~15 lines — validate + proxy',
     sheets: '~80 lines — token refresh, API call, error handling, row mapping',
   },
   {
     label: 'Error visibility',
-    zapier: 'Zapier task history (external) — app receives only an HTTP 200/error from Zapier',
+    webhook: 'Automation platform logs (external) — app receives only an HTTP 200/error from the platform',
     sheets: 'Structured Google API errors — typed HTTP 4xx/5xx with messages',
   },
   {
     label: 'Third-party in write path',
-    zapier: 'Yes — Zapier; swap the destination (Notion, Airtable, Slack) with zero code changes',
+    webhook: 'Yes — automation platform; swap the destination (Notion, Airtable, Slack) with zero code changes',
     sheets: 'No — direct Google API; you own the entire write path',
   },
   {
     label: 'Extensibility',
-    zapier: 'Limited to what Zapier actions support',
+    webhook: 'Depends on the automation platform and what actions it supports',
     sheets: 'Full control — add delete, update, any Sheets API feature',
   },
 ]
@@ -116,7 +116,7 @@ export default function DevPage() {
         <div className="min-w-[540px] overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
           <div className="grid grid-cols-3 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
             <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500"></span>
-            <span className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">Zapier</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">Webhook</span>
             <span className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">Sheets API</span>
           </div>
           {COMPARISON_ROWS.map((row, i) => (
@@ -127,7 +127,7 @@ export default function DevPage() {
               }`}
             >
               <span className="font-medium text-zinc-700 dark:text-zinc-300">{row.label}</span>
-              <span className="text-zinc-600 dark:text-zinc-400">{row.zapier}</span>
+              <span className="text-zinc-600 dark:text-zinc-400">{row.webhook}</span>
               <span className="text-zinc-600 dark:text-zinc-400">{row.sheets}</span>
             </div>
           ))}
@@ -137,11 +137,10 @@ export default function DevPage() {
 
       <Section title="How the integrations work">
         <p>
-          <strong className="text-zinc-700 dark:text-zinc-300">Zapier</strong> — the app acts as a thin proxy.
-          The client sends the expense payload plus the user&apos;s webhook URL to <Code>/api/zapier</Code>.
-          The route validates the body and forwards it to Zapier. Zapier handles the rest — no Google credentials
-          are ever needed on the server. This is the no-code philosophy: powerful for connecting systems,
-          limited when you need reads or want to avoid per-task pricing.
+          <strong className="text-zinc-700 dark:text-zinc-300">Webhook</strong> — the app acts as a thin proxy.
+          The client sends the expense payload plus the user&apos;s webhook URL to <Code>/api/webhook</Code>.
+          The route validates the body and forwards it to the URL. The automation platform handles the rest — no Google credentials
+          are ever needed on the server. Works with Zapier, Make, Pipedream, n8n, or any service that accepts a POST request.
         </p>
         <p className="mt-2">
           <strong className="text-zinc-700 dark:text-zinc-300">Sheets API</strong> — the app implements
@@ -176,14 +175,14 @@ export default function DevPage() {
           </p>
         </div>
 
-        {/* Zapier setup */}
+        {/* Webhook setup */}
         <div className="flex flex-col gap-4">
-          <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Zapier — no server setup required</h3>
+          <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Webhook — no server setup required</h3>
           <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
               The webhook URL is provided by the user at runtime — it&apos;s passed in the request body and never
-              stored server-side. There are no environment variables to set and no Google Cloud configuration needed.
-              Deploy the app and users can start using Zapier immediately.
+              stored server-side. There are no environment variables to set and no third-party configuration needed.
+              Deploy the app and users can connect any automation platform immediately.
             </p>
           </div>
         </div>
@@ -264,8 +263,8 @@ export default function DevPage() {
           call, and discards both. The access token and plaintext refresh token never reach the client.
         </p>
         <p className="mt-2">
-          The Zapier webhook URL is stored in <Code>localStorage</Code> and sent in the request body.
-          It is a shared secret — anyone who obtains it can POST to the Zap. The app never logs
+          The webhook URL is stored in <Code>localStorage</Code> and sent in the request body.
+          It is a shared secret — anyone who obtains it can POST to the webhook. The app never logs
           any credential server-side.
         </p>
       </Section>

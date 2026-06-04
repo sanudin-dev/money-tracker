@@ -49,7 +49,7 @@ export default function PrivacyPage() {
           <li><strong className="text-zinc-700 dark:text-zinc-300">Expenses</strong> — saved to IndexedDB in your browser. Never sent anywhere unless you have an integration configured.</li>
           <li><strong className="text-zinc-700 dark:text-zinc-300">Settings</strong> — your currency and integration credentials stored in <code className="rounded bg-zinc-100 px-1 font-mono text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">localStorage</code>.</li>
           <li><strong className="text-zinc-700 dark:text-zinc-300">Google refresh token</strong> (Sheets API integration) — stored encrypted (AES-256-GCM) in <code className="rounded bg-zinc-100 px-1 font-mono text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">localStorage</code>. The plaintext token is only ever held server-side during an active API request. You can revoke it at any time from your Google account.</li>
-          <li><strong className="text-zinc-700 dark:text-zinc-300">Zapier webhook URL</strong> (Zapier integration) — stored in <code className="rounded bg-zinc-100 px-1 font-mono text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">localStorage</code>. Treat it as a private link.</li>
+          <li><strong className="text-zinc-700 dark:text-zinc-300">Webhook URL</strong> (Webhook integration) — stored in <code className="rounded bg-zinc-100 px-1 font-mono text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">localStorage</code>. Treat it as a private link.</li>
         </ul>
       </Section>
 
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
       <Section title="Third-party services">
         <ul className="ml-4 list-disc space-y-1">
           <li><strong className="text-zinc-700 dark:text-zinc-300">Google Sheets API</strong> — used via the Sheets API integration to read and write expense data to your spreadsheet. Subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Google&apos;s Privacy Policy</a>.</li>
-          <li><strong className="text-zinc-700 dark:text-zinc-300">Zapier</strong> — used via the Zapier integration to forward expense data to your destination via a webhook. Subject to <a href="https://zapier.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Zapier&apos;s Privacy Policy</a>.</li>
+          <li><strong className="text-zinc-700 dark:text-zinc-300">Webhook destination</strong> — when the Webhook integration is active, expense data is forwarded to the URL you configure. The destination platform&apos;s own privacy policy applies (e.g. <a href="https://zapier.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Zapier</a>, <a href="https://www.make.com/en/privacy-notice" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Make</a>).</li>
         </ul>
       </Section>
 

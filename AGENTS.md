@@ -1,6 +1,6 @@
 # Money Tracker — Agent Guide
 
-Local-first expense tracker. **Zapier** and **Sheets API** are independent output channels — both can be active simultaneously.
+Local-first expense tracker. **Webhook** and **Sheets API** are independent output channels — both can be active simultaneously.
 Next.js 16 App Router PWA. No backend database. All user data in the browser.
 
 ---
@@ -25,7 +25,7 @@ src/app/page.tsx              → HistoryWrapper.tsx        (expense history)
 src/app/settings/page.tsx     → IntegrationRow + CurrencyRow (settings hub)
 src/app/settings/connect/     → ConfigForm.tsx            (credentials)
 src/app/settings/guide/       → SetupTabs.tsx             (setup guide)
-src/app/compare/page.tsx                                   (zapier vs sheets)
+src/app/compare/page.tsx                                   (webhook vs sheets)
 src/app/install/page.tsx                                   (PWA install guide)
 src/app/dev/page.tsx                                       (developer notes)
 src/app/privacy/page.tsx                                   (privacy policy)

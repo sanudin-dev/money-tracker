@@ -85,7 +85,7 @@ export function EditExpenseModal({ expense, onSave, onClose }: Props) {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Edit Expense</h2>
-            {(config.zapier || config.sheets) && (
+            {(config.webhook || config.sheets) && (
               <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
                 Saved to your device only — connected integrations won&apos;t be updated.
               </p>

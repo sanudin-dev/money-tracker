@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 export const configSchema = z.object({
   currencyCode: z.string().optional(),
-  // webhookUrl is z.string() here (storage schema) — URL validation happens in zapierRequestSchema
-  zapier: z.object({
+  // webhookUrl is z.string() here (storage schema) — URL validation happens in webhookRequestSchema
+  webhook: z.object({
     webhookUrl: z.string(),
     appId: z.string().optional(),
   }).optional().catch(undefined),
@@ -30,8 +30,8 @@ export const storedExpenseSchema = expenseSchema.extend({
   createdAt: z.string(),
 })
 
-export const zapierRequestSchema = storedExpenseSchema.extend({
-  zapierWebhookUrl: z.url(),
+export const webhookRequestSchema = storedExpenseSchema.extend({
+  webhookUrl: z.url(),
   appId: z.string().optional(),
 })
 
