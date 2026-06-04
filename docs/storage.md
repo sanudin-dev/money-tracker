@@ -10,9 +10,10 @@ Accessed via `useConfig` hook. Keys defined in `src/lib/constants.ts`.
 
 | Key | Type | Contents |
 |---|---|---|
-| `mt_config` | `Partial<Config>` | Mode, credentials, currency code |
+| `mt_config` | `Partial<Config>` | Active integrations config, currency code |
 | `mt_guide_checklist` | `Record<string, boolean>` | Persistent checkbox state on `/settings/guide` |
-| `mt_sync_queue` | `string[]` | Expense IDs queued for offline sync |
+| `mt_sync_queue_zapier` | `string[]` | Expense IDs queued for offline Zapier push |
+| `mt_sync_queue_sheets` | `string[]` | Expense IDs queued for offline Sheets push |
 
 ---
 
@@ -38,12 +39,14 @@ deleteExpense(id: string): Promise<void>
 
 ## Sync queue
 
+Per-integration retry queues. Each integration has its own key so a successful push to one integration is never re-sent on retry.
+
 Three helpers in `src/lib/syncQueue.ts`:
 
 ```ts
-getSyncQueue(): string[]          // read queue from localStorage
-enqueueSync(id: string): void     // add expense ID if not already present
-dequeueSync(id: string): void     // remove expense ID after successful sync
+getSyncQueue(integration: IntegrationType): string[]         // read queue from localStorage
+enqueueSync(id: string, integration: IntegrationType): void  // add ID if not already present
+dequeueSync(id: string, integration: IntegrationType): void  // remove ID after successful sync
 ```
 
-`useSyncQueue` hook auto-processes the queue on mount and on `window.online`.
+`useSyncQueue` processes all active integration queues on mount and on `window.online`.

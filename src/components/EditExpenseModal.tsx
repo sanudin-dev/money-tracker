@@ -175,7 +175,7 @@ export function EditExpenseModal({ expense, onSave, onClose }: Props) {
             </label>
             <input
               type="text"
-              placeholder="e.g. coffee with client"
+              placeholder="e.g. lunch, fruits, coffee"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"

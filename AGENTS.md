@@ -1,6 +1,6 @@
 # Money Tracker — Agent Guide
 
-One codebase, three sync modes: **Local**, **Zapier**, **Sheets API**.
+Local-first expense tracker. **Zapier** and **Sheets API** are independent output channels — both can be active simultaneously.
 Next.js 16 App Router PWA. No backend database. All user data in the browser.
 
 ---
@@ -9,7 +9,7 @@ Next.js 16 App Router PWA. No backend database. All user data in the browser.
 
 | Document | Covers |
 |---|---|
-| [Architecture](docs/architecture.md) | Three modes, data flow, core types, OAuth flow, PWA |
+| [Architecture](docs/architecture.md) | Data flow, core types, bidirectional sync, OAuth flow, PWA |
 | [Storage](docs/storage.md) | localStorage keys, IndexedDB schema, sync queue |
 | [API routes](docs/api-routes.md) | All four routes, request shapes, security model |
 | [Components](docs/components.md) | What each component owns and renders |
@@ -31,13 +31,13 @@ src/app/dev/page.tsx                                       (developer notes)
 src/app/privacy/page.tsx                                   (privacy policy)
 
 src/hooks/useConfig.ts         read/write config (localStorage)
-src/hooks/useMode.ts           current mode derived from config
-src/hooks/useSyncQueue.ts      offline sync queue management
+src/hooks/useSheetsSync.ts     bidirectional sync between IndexedDB and Google Sheets
+src/hooks/useSyncQueue.ts      per-integration offline retry queues
 
 src/lib/storage.ts             all IndexedDB access — never bypass this
-src/lib/syncQueue.ts           enqueue/dequeue offline expense IDs
-src/lib/constants.ts           API paths, localStorage keys, mode labels
-src/types/index.ts             Mode, Config, Expense types
+src/lib/syncQueue.ts           enqueue/dequeue/get per-integration offline expense IDs
+src/lib/constants.ts           API paths, localStorage keys, integration labels
+src/types/index.ts             IntegrationType, Config, Expense types
 ```
 
 ---

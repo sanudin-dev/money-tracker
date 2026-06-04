@@ -22,6 +22,11 @@ const ROWS: Row[] = [
     sheets: 'Yes — exports your local expense data',
   },
   {
+    label: 'Multi-device sync',
+    zapier: 'Not supported',
+    sheets: 'Yes — "Sync now" pulls rows from the sheet missing on this device and pushes local expenses not yet in the sheet',
+  },
+  {
     label: 'Edit / delete',
     zapier: 'In app — changes stay local; destination not updated',
     sheets: 'In app — changes stay local; destination not updated',
@@ -139,6 +144,13 @@ export default function ComparePage() {
           The connection persists indefinitely and can be revoked at any time from your Google account
           settings. If you want a reliable, free backup of your expenses that doesn&apos;t expire
           on a task counter, this is the right integration.
+        </p>
+        <p className="mt-2">
+          It&apos;s also the only integration that supports <strong className="text-zinc-700 dark:text-zinc-300">multi-device sync</strong>.
+          The &ldquo;Sync now&rdquo; button on the history page pulls any rows from the sheet that
+          aren&apos;t on the current device yet, and pushes any local expenses that haven&apos;t
+          reached the sheet. Two people sharing the same spreadsheet ID can use this to keep
+          their histories in sync.
         </p>
       </Section>
 

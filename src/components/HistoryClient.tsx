@@ -7,6 +7,7 @@ import { formatCurrency, detectDefaultCurrency } from '@/lib/currency'
 import { getExpenses, deleteExpense } from '@/lib/storage'
 import { EditExpenseModal } from '@/components/EditExpenseModal'
 import { SyncBanner } from '@/components/SyncBanner'
+import { useSheetsSync } from '@/hooks/useSheetsSync'
 import { exportToCsv } from '@/lib/export'
 import type { Expense } from '@/types'
 
@@ -55,6 +56,7 @@ function isCurrentMonth(m: MonthState): boolean {
 export function HistoryClient() {
   const { config } = useConfig()
   const currencyCode = config.currencyCode ?? detectDefaultCurrency()
+  const { syncing: sheetsSyncing, sync: syncSheets, result: syncResult, error: syncError } = useSheetsSync()
 
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
@@ -70,6 +72,13 @@ export function HistoryClient() {
       setLoading(false)
     })
   }, [])
+
+  // Reload local list after a pull so newly imported expenses appear immediately.
+  useEffect(() => {
+    if (syncResult && syncResult.pulled > 0) {
+      getExpenses().then(setExpenses)
+    }
+  }, [syncResult])
 
   function handleDelete(id: string) {
     setExpenses((prev) => prev.filter((e) => e.id !== id))
@@ -152,6 +161,32 @@ export function HistoryClient() {
       )}
 
       <SyncBanner />
+
+      {config.sheets && (
+        <div className="flex items-center justify-between rounded-lg border border-zinc-200 px-3 py-2 text-xs dark:border-zinc-800">
+          <span className="text-zinc-500 dark:text-zinc-400">Google Sheets</span>
+          <div className="flex items-center gap-3">
+            {syncResult && !sheetsSyncing && (
+              <span className="text-zinc-400 dark:text-zinc-500">
+                {syncResult.pulled + syncResult.pushed === 0
+                  ? 'Up to date'
+                  : `↓ ${syncResult.pulled} pulled · ↑ ${syncResult.pushed} pushed`}
+              </span>
+            )}
+            {syncError && !sheetsSyncing && (
+              <span className="truncate max-w-[160px] text-red-500">{syncError}</span>
+            )}
+            <button
+              type="button"
+              disabled={sheetsSyncing}
+              onClick={() => void syncSheets()}
+              className="font-medium text-zinc-600 underline underline-offset-2 hover:text-zinc-900 disabled:opacity-50 dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              {sheetsSyncing ? 'Syncing…' : 'Sync now'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Month navigator */}
       <div className="flex items-center justify-between">

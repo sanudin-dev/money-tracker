@@ -193,6 +193,7 @@ The API routes are **thin proxies only**. They:
 ## History page behaviour (`/`)
 
 - `SyncBanner` at the top shows offline queue status
+- **Sheets sync row** (shown when Sheets is connected) — "Sync now" button triggers bidirectional sync via `useSheetsSync`; result shows "↓ N pulled · ↑ N pushed" or "Up to date"
 - Month navigator to browse past months
 - Category accordion — click total to expand breakdown
 - Expense rows grouped by date with per-day total

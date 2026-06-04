@@ -71,6 +71,21 @@ Queue helpers in `src/lib/syncQueue.ts`:
 
 ---
 
+## Bidirectional sync (Sheets API)
+
+`useSheetsSync` hook (called from `HistoryClient`) enables multi-device / multi-user sync via a shared spreadsheet.
+
+1. `GET /api/sheets` — fetches all rows from the sheet
+2. Diff by `id` against IndexedDB:
+   - **Pull**: rows in sheet but not locally → `addExpense()` (upsert — safe to call with existing IDs)
+   - **Push**: local expenses not in sheet → `POST /api/sheets` sequentially (to respect rate limits)
+3. Failed pushes are enqueued to `mt_sync_queue_sheets` for retry by `useSyncQueue`
+4. `HistoryClient` reloads from IndexedDB when `pulled > 0`
+
+The `id` field is the dedup key. No row is ever duplicated on either side.
+
+---
+
 ## Authentication flow (Sheets API)
 
 1. User clicks "Connect Google Sheets" in `/settings/connect`

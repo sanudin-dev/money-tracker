@@ -4,7 +4,7 @@
 
 | Component | File | Owns |
 |---|---|---|
-| `ExpenseForm` | `ExpenseForm.tsx` | Add expense form — amount (with expression eval), category, date, description. Saves to IndexedDB, calls API if mode ≠ local. Renders `SyncBanner` above. |
+| `ExpenseForm` | `ExpenseForm.tsx` | Add expense form — amount (with expression eval), category, date, description. Saves to IndexedDB, then pushes to all active integrations concurrently. Renders `SyncBanner` above. |
 | `EditExpenseModal` | `EditExpenseModal.tsx` | Edit an existing expense in a centered modal. |
 | `ConfigForm` | `ConfigForm.tsx` | Zapier webhook URL input and Sheets API OAuth connect button. Saves config to localStorage. |
 
@@ -15,8 +15,7 @@
 | Component | File | Owns |
 |---|---|---|
 | `BottomNav` | `BottomNav.tsx` | Fixed bottom tab bar visible on mobile only (History, Add, Settings). Uses `usePathname` for active state. |
-| `ModeStatusLine` | `ModeStatusLine.tsx` | Read-only one-liner showing current mode + link to Settings. Rendered on `/add`. |
-| `ModeToggle` | `ModeToggle.tsx` | Full mode switcher (Local / Zapier / Sheets API). |
+| `IntegrationStatusLine` | `ModeStatusLine.tsx` | Read-only one-liner showing active integrations + link to Settings. Rendered on `/add`. |
 
 ---
 
@@ -25,7 +24,7 @@
 | Component | File | Owns |
 |---|---|---|
 | `HistoryWrapper` | `HistoryWrapper.tsx` | Thin server-side wrapper. Mounts `HistoryClient`. |
-| `HistoryClient` | `HistoryClient.tsx` | Month navigator, expense list grouped by date, category accordion, three-dot edit/delete menu, CSV export button. |
+| `HistoryClient` | `HistoryClient.tsx` | Month navigator, expense list grouped by date, category accordion, three-dot edit/delete menu, CSV export button. Shows a Sheets sync row (via `useSheetsSync`) when Sheets is connected. |
 | `SyncBanner` | `SyncBanner.tsx` | Amber banner showing count of queued offline expenses. Has a manual "Sync now" button. Renders nothing when queue is empty. |
 
 ---
@@ -34,7 +33,7 @@
 
 | Component | File | Owns |
 |---|---|---|
-| `IntegrationRow` | `IntegrationRow.tsx` | Inline mode selector row on the Settings hub page. |
+| `IntegrationRow` | `IntegrationRow.tsx` | Inline row on the Settings hub showing active integrations + link to `/settings/connect`. |
 | `CurrencyRow` | `CurrencyRow.tsx` | Inline currency selector row on the Settings hub page. |
 | `SetupTabs` | `SetupTabs.tsx` | Zapier / Sheets API step-by-step setup guide with persistent checklist (localStorage). |
 

@@ -24,7 +24,7 @@ const COMPARISON_ROWS: Row[] = [
   {
     label: 'Read path',
     zapier: 'Not implemented — fire-and-forget',
-    sheets: 'GET /api/sheets → refreshAccessToken() → values.get → row parsing',
+    sheets: 'GET /api/sheets → refreshAccessToken() → values.get → row parsing; powers bidirectional sync (useSheetsSync)',
   },
   {
     label: 'Token handling',
@@ -156,6 +156,14 @@ export default function DevPage() {
           fetches the user&apos;s email, then redirects to <Code>/settings/connect</Code> with the refresh
           token and email as URL params. <Code>ConfigForm</Code> reads and saves these on mount, then
           immediately calls <Code>history.replaceState</Code> to remove them from the URL.
+        </p>
+        <p className="mt-2">
+          <strong className="text-zinc-700 dark:text-zinc-300">Bidirectional sync</strong> — the{' '}
+          <Code>useSheetsSync</Code> hook (called from the history page) uses the same{' '}
+          <Code>GET /api/sheets</Code> endpoint to fetch all rows, diffs them against IndexedDB by{' '}
+          <Code>id</Code>, pulls missing rows into local storage, then pushes local-only expenses
+          back to the sheet. This lets two devices sharing the same spreadsheet ID stay in sync
+          without a backend database.
         </p>
       </Section>
 
