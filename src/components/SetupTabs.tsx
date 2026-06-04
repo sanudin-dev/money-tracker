@@ -33,34 +33,37 @@ function Note({ children }: { children: React.ReactNode }) {
   )
 }
 
-const CHECKLIST: Record<'webhook' | 'sheets', string[]> = {
-  webhook: [
-    'Automation account created (Zapier free tier works)',
-    'Webhook trigger created and turned on',
-    'Webhook URL copied',
-    'Webhook URL pasted in Settings → Connect',
-  ],
-  sheets: [
-    'Google Sheet created (headers are added automatically on first sync)',
-    'Spreadsheet ID copied from the Sheet URL',
-    'Spreadsheet ID entered in Connect',
-    'Google account connected via "Connect Google Sheets"',
-  ],
+const PAYLOAD_FIELDS: [string, string][] = [
+  ['ID', 'id'],
+  ['Amount', 'amount'],
+  ['Category', 'category'],
+  ['Description', 'description'],
+  ['Date', 'date'],
+  ['Created At', 'createdAt'],
+]
+
+function FieldMap() {
+  return (
+    <div className="mt-1.5 grid grid-cols-2 gap-x-6 gap-y-0.5 font-mono text-xs">
+      {PAYLOAD_FIELDS.map(([label, field]) => (
+        <Fragment key={label}>
+          <span className="text-zinc-400">{label}</span>
+          <Code>{field}</Code>
+        </Fragment>
+      ))}
+    </div>
+  )
 }
 
-function WebhookSteps() {
+function ZapierSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Expenses are forwarded to a webhook URL. Any automation platform works — Zapier, Make, Pipedream, n8n, or a custom endpoint. The data can go anywhere the platform supports. History always shows your local log.
+        Use Zapier&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhooks by Zapier</strong> trigger to receive expenses and route them to any app Zapier supports.
       </p>
-
       <Step n={1}>
-        <span>
-          Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">zapier.com</span> (free tier is enough).
-        </span>
+        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">zapier.com</span> (free tier is enough).</span>
       </Step>
-
       <Step n={2}>
         <span>Create a new Zap — <strong>Trigger</strong>:</span>
         <ul className="ml-4 list-disc space-y-1">
@@ -68,7 +71,6 @@ function WebhookSteps() {
           <li>Click <em>Continue</em>. Zapier shows a webhook URL — <strong>copy it.</strong></li>
         </ul>
       </Step>
-
       <Step n={3}>
         <span><strong>Action</strong> — pick any app Zapier supports. To write to Google Sheets:</span>
         <ul className="ml-4 list-disc space-y-1">
@@ -76,29 +78,126 @@ function WebhookSteps() {
           <li>Connect your Google account, pick your spreadsheet and sheet tab</li>
           <li>
             Map fields from the payload:
-            <div className="mt-1.5 grid grid-cols-2 gap-x-6 gap-y-0.5 font-mono text-xs">
-              {[['ID', 'id'], ['Amount', 'amount'], ['Category', 'category'], ['Description', 'description'], ['Date', 'date'], ['Created At', 'createdAt']].map(([label, field]) => (
-                <Fragment key={label}>
-                  <span className="text-zinc-400">{label}</span>
-                  <Code>{field}</Code>
-                </Fragment>
-              ))}
-            </div>
+            <FieldMap />
           </li>
         </ul>
       </Step>
-
       <Step n={4}>
         <p>
           Turn on the Zap, then go to{' '}
-          <Link href={'/settings/connect'} className="underline underline-offset-2">Connect</Link>,
+          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
           paste your webhook URL, and click <strong>Save</strong>.
         </p>
       </Step>
+      <Note>Test by submitting one expense — Zapier&apos;s task history confirms whether the row was added.</Note>
+    </div>
+  )
+}
 
-      <Note>
-        Test by submitting one expense — Zapier&apos;s task history confirms whether the row was added.
-      </Note>
+function MakeSteps() {
+  return (
+    <div className="flex flex-col gap-5">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        Use Make&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhooks</strong> module as the trigger to receive expenses and route them to any app Make supports.
+      </p>
+      <Step n={1}>
+        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">make.com</span> (free tier is enough).</span>
+      </Step>
+      <Step n={2}>
+        <span>Create a new Scenario — add the first module:</span>
+        <ul className="ml-4 list-disc space-y-1">
+          <li>Search for <strong>Webhooks</strong> → select <strong>Custom webhook</strong></li>
+          <li>Click <strong>Add</strong> to create a webhook — Make shows a URL. <strong>Copy it.</strong></li>
+          <li>Click <em>OK</em>, then <strong>Determine data structure</strong> and submit one expense so Make learns the payload shape.</li>
+        </ul>
+      </Step>
+      <Step n={3}>
+        <span>Add an action module. To write to Google Sheets:</span>
+        <ul className="ml-4 list-disc space-y-1">
+          <li><strong>Google Sheets</strong> → <strong>Add a Row</strong></li>
+          <li>Connect your Google account, pick your spreadsheet and sheet</li>
+          <li>
+            Map fields from the webhook data:
+            <FieldMap />
+          </li>
+        </ul>
+      </Step>
+      <Step n={4}>
+        <p>
+          Turn on the scenario (toggle bottom-left), then go to{' '}
+          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
+          paste your webhook URL, and click <strong>Save</strong>.
+        </p>
+      </Step>
+      <Note>Make&apos;s scenario history shows each run — use it to confirm the expense was received and processed.</Note>
+    </div>
+  )
+}
+
+function PipedreamSteps() {
+  return (
+    <div className="flex flex-col gap-5">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        Pipedream&apos;s <strong className="text-zinc-700 dark:text-zinc-300">HTTP / Webhook</strong> trigger gives you a URL and lets you build action steps with pre-built app integrations or custom code.
+      </p>
+      <Step n={1}>
+        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">pipedream.com</span> (free tier is enough).</span>
+      </Step>
+      <Step n={2}>
+        <span>Create a new workflow:</span>
+        <ul className="ml-4 list-disc space-y-1">
+          <li>Trigger: <strong>HTTP / Webhook</strong> → <strong>New Requests</strong></li>
+          <li>Pipedream shows a unique endpoint URL — <strong>copy it.</strong></li>
+        </ul>
+      </Step>
+      <Step n={3}>
+        <span>Add an action step. Fields arrive under <Code>steps.trigger.event.body</Code> — for example <Code>steps.trigger.event.body.amount</Code> or <Code>steps.trigger.event.body.category</Code>.</span>
+        <span>For a ready-made integration, search the app you want (e.g. <strong>Google Sheets → Add Single Row</strong>) and map the columns.</span>
+      </Step>
+      <Step n={4}>
+        <p>
+          Deploy the workflow, then go to{' '}
+          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
+          paste your endpoint URL, and click <strong>Save</strong>.
+        </p>
+      </Step>
+      <Note>Pipedream&apos;s event inspector shows each incoming request in real time — useful for confirming the payload shape before building action steps.</Note>
+    </div>
+  )
+}
+
+function N8nSteps() {
+  return (
+    <div className="flex flex-col gap-5">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        n8n&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhook</strong> node exposes an endpoint you control — available on n8n Cloud or self-hosted.
+      </p>
+      <Step n={1}>
+        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">n8n.io</span> (cloud) or set up a self-hosted instance.</span>
+      </Step>
+      <Step n={2}>
+        <span>Create a new workflow — add a <strong>Webhook</strong> node:</span>
+        <ul className="ml-4 list-disc space-y-1">
+          <li>HTTP Method: <strong>POST</strong></li>
+          <li>Authentication: <strong>None</strong> (or add header auth if preferred)</li>
+          <li>Copy the <strong>Production URL</strong> shown in the node panel.</li>
+        </ul>
+      </Step>
+      <Step n={3}>
+        <span>Add an action node. Fields arrive in <Code>{'{{ $json.body }}'}</Code> — for example to write to Google Sheets:</span>
+        <ul className="ml-4 list-disc space-y-1">
+          <li>Add a <strong>Google Sheets</strong> node → <strong>Append Row to Sheet</strong></li>
+          <li>Map columns using expressions like <Code>{'{{ $json.body.amount }}'}</Code></li>
+        </ul>
+      </Step>
+      <Step n={4}>
+        <p>
+          Activate the workflow (toggle top-right), then go to{' '}
+          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
+          paste your Production URL, and click <strong>Save</strong>.
+        </p>
+      </Step>
+      <Note>Use the Test URL during setup to inspect the payload in n8n&apos;s execution log — switch to the Production URL before saving in Settings.</Note>
     </div>
   )
 }
@@ -125,7 +224,7 @@ function SheetsSteps() {
       <Step n={2}>
         <p>
           Go to{' '}
-          <Link href={'/settings/connect'} className="underline underline-offset-2">Connect</Link>,
+          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
           select <strong>Sheets API</strong>, enter your Spreadsheet ID, then click{' '}
           <strong>Connect Google Sheets</strong>. Approve the Google consent screen — done.
         </p>
@@ -145,6 +244,49 @@ function SheetsSteps() {
   )
 }
 
+type WebhookPlatform = 'zapier' | 'make' | 'pipedream' | 'n8n'
+
+const WEBHOOK_PLATFORMS: { value: WebhookPlatform; label: string }[] = [
+  { value: 'zapier', label: 'Zapier' },
+  { value: 'make', label: 'Make' },
+  { value: 'pipedream', label: 'Pipedream' },
+  { value: 'n8n', label: 'n8n' },
+]
+
+const WEBHOOK_CHECKLIST: Record<WebhookPlatform, string[]> = {
+  zapier: [
+    'Zapier account created',
+    'Zap created with Webhooks by Zapier → Catch Hook trigger',
+    'Action step set up and Zap turned on',
+    'Webhook URL pasted in Settings → Connect',
+  ],
+  make: [
+    'Make account created',
+    'Scenario created with Webhooks → Custom webhook trigger',
+    'Action module set up and scenario turned on',
+    'Webhook URL pasted in Settings → Connect',
+  ],
+  pipedream: [
+    'Pipedream account created',
+    'Workflow created with HTTP / Webhook trigger',
+    'Action step set up and workflow deployed',
+    'Endpoint URL pasted in Settings → Connect',
+  ],
+  n8n: [
+    'n8n account or instance ready',
+    'Workflow created with Webhook node (POST, Production URL)',
+    'Action node set up and workflow activated',
+    'Production URL pasted in Settings → Connect',
+  ],
+}
+
+const SHEETS_CHECKLIST = [
+  'Google Sheet created (headers are added automatically on first sync)',
+  'Spreadsheet ID copied from the Sheet URL',
+  'Spreadsheet ID entered in Connect',
+  'Google account connected via "Connect Google Sheets"',
+]
+
 type Tab = 'webhook' | 'sheets'
 
 const TABS: { value: Tab; label: string }[] = [
@@ -152,8 +294,10 @@ const TABS: { value: Tab; label: string }[] = [
   { value: 'sheets', label: INTEGRATION_LABELS.sheets },
 ]
 
+/** Step-by-step setup guide for each integration, with a persistent checklist. */
 export function SetupTabs() {
   const [tab, setTab] = useState<Tab>('webhook')
+  const [platform, setPlatform] = useState<WebhookPlatform>('zapier')
   const [checked, setChecked] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {}
     try {
@@ -171,9 +315,11 @@ export function SetupTabs() {
     })
   }
 
+  const activeChecklist = tab === 'sheets' ? SHEETS_CHECKLIST : WEBHOOK_CHECKLIST[platform]
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Tab bar */}
+      {/* Top-level tab bar */}
       <div className="flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
         {TABS.map(({ value, label }) => (
           <button
@@ -193,14 +339,40 @@ export function SetupTabs() {
 
       {/* Steps */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-        {tab === 'webhook' ? <WebhookSteps /> : <SheetsSteps />}
+        {tab === 'webhook' ? (
+          <div className="flex flex-col gap-5">
+            {/* Platform sub-tabs */}
+            <div className="flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+              {WEBHOOK_PLATFORMS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setPlatform(value)}
+                  className={`flex-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+                    platform === value
+                      ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {platform === 'zapier' && <ZapierSteps />}
+            {platform === 'make' && <MakeSteps />}
+            {platform === 'pipedream' && <PipedreamSteps />}
+            {platform === 'n8n' && <N8nSteps />}
+          </div>
+        ) : (
+          <SheetsSteps />
+        )}
       </div>
 
       {/* Checklist */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <p className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Checklist</p>
         <div className="flex flex-col gap-2 text-sm">
-          {CHECKLIST[tab].map((item) => (
+          {activeChecklist.map((item) => (
             <label key={item} className="flex items-start gap-2 text-zinc-600 dark:text-zinc-400">
               <input
                 type="checkbox"
