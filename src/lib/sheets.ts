@@ -4,7 +4,7 @@ const SHEETS_BASE = 'https://sheets.googleapis.com/v4/spreadsheets'
 const MONTH_TAB_REGEX = /^\d{4}-\d{2}$/
 const COLUMNS = ['id', 'amount', 'category', 'description', 'date', 'createdAt'] as const
 // Header names match the column names Zapier uses so both integrations produce the same layout.
-const HEADER_ROW = ['ID', 'Amount', 'Category', 'Description', 'Date', 'Created At']
+const HEADER_ROW = ['ID', 'Amount', 'Category', 'Description', 'Date', 'Created At (UTC)']
 
 type SheetsError = { error: { code: number; message: string } }
 
@@ -106,7 +106,11 @@ export async function appendExpense(
   // as sent — consistent with what Zapier writes when it receives the same JSON payload.
   const url = `${SHEETS_BASE}/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`
 
-  const row = COLUMNS.map((col) => String(expense[col]))
+  const row = COLUMNS.map((col) =>
+    col === 'createdAt'
+      ? expense.createdAt.slice(0, 19).replace('T', ' ')
+      : String(expense[col])
+  )
 
   const res = await fetch(url, {
     method: 'POST',
