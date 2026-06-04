@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ConfigForm } from '@/components/ConfigForm'
 
 export const metadata = {
@@ -18,6 +19,14 @@ export default function ConnectPage() {
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Configure your integrations. Both can be active at the same time.
         </p>
+        <div className="mt-1 flex flex-col gap-2.5">
+          <Link href="/settings/guide" className="text-xs text-zinc-400 underline underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300">
+            Need help setting up? See the guide →
+          </Link>
+          <Link href="/compare" className="text-xs text-zinc-400 underline underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300">
+            Not sure which to use? Compare integrations →
+          </Link>
+        </div>
       </div>
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">

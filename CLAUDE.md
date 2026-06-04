@@ -228,6 +228,5 @@ The API routes are **thin proxies only**. They:
 
 ## Next improvements
 
-- **Add automation platform setup tabs** — the guide page currently shows a Zapier-specific walkthrough under the Webhook tab; expand it to cover Make, Pipedream, and n8n with their own step-by-step instructions.
 - **Notion integration** — add as a third `IntegrationType` with database ID + integration token; write to a Notion database via the Notion API directly (same pattern as Sheets API).
 - **Dark/light theme toggle** — currently follows OS `prefers-color-scheme`; add a manual toggle that persists in `localStorage`.
