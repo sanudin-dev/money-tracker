@@ -66,9 +66,11 @@ export function detectDefaultCurrency(): string {
 
 export function formatCurrency(amount: number, currencyCode: string): string {
   try {
+    const zeroDecimal = ZERO_DECIMAL_CURRENCIES.has(currencyCode)
     return new Intl.NumberFormat(undefined, {
       style: 'currency',
       currency: currencyCode,
+      ...(zeroDecimal && { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
     }).format(amount)
   } catch {
     return `${currencyCode} ${amount.toFixed(2)}`

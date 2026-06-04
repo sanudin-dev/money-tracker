@@ -30,7 +30,7 @@ Both integrations are optional and independent — enable neither, one, or both 
 | What it does | Sends each expense to any Zapier-connected app | Writes directly to a Google Sheet |
 | Cost | Free tier (100 tasks/mo) | Free |
 
-See the [Compare page](https://mt.sanudin.dev/compare) for details.
+See the [Integrations page](https://mt.sanudin.dev/compare) for details.
 
 ---
 

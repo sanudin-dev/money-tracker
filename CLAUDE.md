@@ -174,7 +174,7 @@ The API routes are **thin proxies only**. They:
 
 ## Settings page layout
 
-- **`/settings`** — hub page: links to Connect, Guide, Install, Compare, Developer. Inline rows for Integrations and Currency.
+- **`/settings`** — hub page: links to Connect, Guide, Install, Integrations, Developer. Inline rows for Integrations and Currency.
 - **`/settings/connect`** — `ConfigForm`: two independent panels (Zapier + Sheets API). Each saves/disconnects independently.
 - **`/settings/guide`** — `SetupTabs`: step-by-step guide per integration with a persistent checklist
 

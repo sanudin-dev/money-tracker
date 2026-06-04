@@ -66,7 +66,7 @@ const ROWS: Row[] = [
   },
   {
     href: '/compare',
-    label: 'Compare',
+    label: 'Integrations',
     description: 'See what Zapier and Sheets API each offer',
     iconBg: 'bg-violet-500',
     icon: (

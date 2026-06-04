@@ -32,6 +32,13 @@ export function ExpenseForm() {
   const [status, setStatus] = useState<Status>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  // Auto-dismiss success/pending after 4 s so the message doesn't linger into the next entry.
+  useEffect(() => {
+    if (!status || status.type === 'error') return
+    const t = setTimeout(() => setStatus(null), 4000)
+    return () => clearTimeout(t)
+  }, [status])
+
   const [pastDescriptions, setPastDescriptions] = useState<string[]>([])
   useEffect(() => {
     getExpenses().then((all) => {
