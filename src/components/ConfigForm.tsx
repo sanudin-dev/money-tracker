@@ -33,8 +33,6 @@ export function ConfigForm() {
   const [sheetsOverrides, setSheetsOverrides] = useState<Partial<{ spreadsheetId: string }>>({})
   const [sheetsErrors, setSheetsErrors] = useState<SheetsErrors>({})
   const [sheetsSaved, setSheetsSaved] = useState(false)
-  const [sheetsSyncing, setSheetsSyncing] = useState(false)
-  const [sheetsSyncResult, setSheetsSyncResult] = useState<{ done: number; failed: number } | null>(null)
   const [authError, setAuthError] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
     const err = new URLSearchParams(window.location.search).get('authError')
@@ -133,29 +131,6 @@ export function ConfigForm() {
     }
     setWebhookSyncing(false)
     setWebhookSyncResult({ done, failed })
-  }
-
-  async function handleSyncAllSheets() {
-    if (!config.sheets || sheetsSyncing) return
-    setSheetsSyncing(true)
-    setSheetsSyncResult(null)
-    const expenses = await getExpenses()
-    let done = 0, failed = 0
-    for (const expense of expenses) {
-      try {
-        const res = await fetch(API.SHEETS, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...expense, sheetsSpreadsheetId: config.sheets.spreadsheetId, sheetsRefreshToken: config.sheets.refreshToken }),
-        })
-        const json = await res.json() as { ok: boolean }
-        if (json.ok) done++; else failed++
-      } catch {
-        failed++
-      }
-    }
-    setSheetsSyncing(false)
-    setSheetsSyncResult({ done, failed })
   }
 
   function handleSaveSheets(e: { preventDefault(): void }) {
@@ -374,23 +349,10 @@ export function ConfigForm() {
         </div>
 
         {config.sheets?.refreshToken && (
-          <div className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+          <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              <strong className="text-zinc-700 dark:text-zinc-300">Sync local data</strong> — push all expenses saved on this device to your Google Sheet. May create duplicates if some were already synced.
+              To sync expenses with your sheet, use the <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button on the History page — it checks for duplicates automatically.
             </p>
-            <button
-              type="button"
-              onClick={handleSyncAllSheets}
-              disabled={sheetsSyncing}
-              className="self-start rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-white disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
-            >
-              {sheetsSyncing ? 'Syncing…' : 'Sync all expenses'}
-            </button>
-            {sheetsSyncResult && (
-              <p className={`text-xs ${sheetsSyncResult.failed > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-700 dark:text-green-400'}`}>
-                {sheetsSyncResult.done} synced{sheetsSyncResult.failed > 0 ? `, ${sheetsSyncResult.failed} failed` : ''}
-              </p>
-            )}
           </div>
         )}
       </form>
