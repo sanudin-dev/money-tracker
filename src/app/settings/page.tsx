@@ -205,7 +205,12 @@ export default function SettingsPage() {
       </div>
 
       <footer className="flex flex-col items-center gap-1.5 py-4 text-center">
-        <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Money Tracker</p>
+        <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          Money Tracker{' '}
+          <span className="font-normal text-zinc-400 dark:text-zinc-500">
+            v{process.env.NEXT_PUBLIC_APP_VERSION}
+          </span>
+        </p>
         <p className="text-xs text-zinc-400 dark:text-zinc-500">
           Local-first expense tracking. Sync via webhook or Google Sheets API.
         </p>

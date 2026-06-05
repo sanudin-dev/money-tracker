@@ -3,6 +3,9 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   turbopack: {},
+  env: {
+    NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version,
+  },
 }
 
 export default withPWA({

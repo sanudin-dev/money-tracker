@@ -1,6 +1,6 @@
 {
   "name": "money-tracker",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Track personal expenses locally or sync to Google Sheets. Works offline. Installable as a PWA.",
   "author": "Sanudin <sanudin.dev@gmail.com>",
