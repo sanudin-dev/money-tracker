@@ -19,10 +19,7 @@ export const expenseSchema = z.object({
     .positive({ message: 'Amount must be greater than 0' }),
   category: z.string().min(1, { message: 'Please select a category' }),
   description: z.string(),
-  date: z.string().refine(
-    (d) => d <= new Date().toISOString().slice(0, 10),
-    { message: 'Date cannot be in the future' },
-  ),
+  date: z.iso.date(),
 })
 
 export const storedExpenseSchema = expenseSchema.extend({

@@ -13,7 +13,7 @@ import { CATEGORIES } from '@/lib/categories'
 import type { Expense } from '@/types'
 
 function todayDate() {
-  return new Date().toISOString().slice(0, 10)
+  return new Date().toLocaleDateString('en-CA') // YYYY-MM-DD in local timezone
 }
 
 type FieldErrors = Partial<Record<'amount' | 'category' | 'date', string>>
