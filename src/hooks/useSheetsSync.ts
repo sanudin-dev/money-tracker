@@ -47,7 +47,11 @@ export function useSheetsSync() {
         sheetsRefreshToken: sheetsConfig.refreshToken,
       })
       const fetchRes = await fetch(`${API.SHEETS}?${params}`)
-      const fetchJson = (await fetchRes.json()) as { ok: boolean; expenses?: Expense[]; error?: string }
+      const fetchJson = (await fetchRes.json()) as {
+        ok: boolean
+        expenses?: Expense[]
+        error?: string
+      }
       if (!fetchJson.ok) throw new Error(fetchJson.error ?? 'Failed to fetch from Sheets.')
 
       const sheetExpenses = fetchJson.expenses ?? []

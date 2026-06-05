@@ -37,9 +37,10 @@ export function useSyncQueue() {
     if (syncingRef.current) return
 
     const webhookPending = config.webhook?.webhookUrl ? getSyncQueue('webhook').length : 0
-    const sheetsPending = (config.sheets?.spreadsheetId && config.sheets?.refreshToken)
-      ? getSyncQueue('sheets').length
-      : 0
+    const sheetsPending =
+      config.sheets?.spreadsheetId && config.sheets?.refreshToken
+        ? getSyncQueue('sheets').length
+        : 0
     if (webhookPending + sheetsPending === 0) return
 
     syncingRef.current = true
@@ -51,11 +52,18 @@ export function useSyncQueue() {
       for (const id of getSyncQueue('webhook')) {
         try {
           const expense = await getExpenseById(id)
-          if (!expense) { dequeueSync(id, 'webhook'); continue }
+          if (!expense) {
+            dequeueSync(id, 'webhook')
+            continue
+          }
           const res = await fetch(API.WEBHOOK, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...expense, webhookUrl: webhookConfig.webhookUrl, appId: webhookConfig.appId }),
+            body: JSON.stringify({
+              ...expense,
+              webhookUrl: webhookConfig.webhookUrl,
+              appId: webhookConfig.appId,
+            }),
           })
           const json = (await res.json()) as { ok: boolean }
           if (json.ok) dequeueSync(id, 'webhook')
@@ -72,11 +80,18 @@ export function useSyncQueue() {
       for (const id of getSyncQueue('sheets')) {
         try {
           const expense = await getExpenseById(id)
-          if (!expense) { dequeueSync(id, 'sheets'); continue }
+          if (!expense) {
+            dequeueSync(id, 'sheets')
+            continue
+          }
           const res = await fetch(API.SHEETS, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...expense, sheetsSpreadsheetId: sheetsConfig.spreadsheetId, sheetsRefreshToken: sheetsConfig.refreshToken }),
+            body: JSON.stringify({
+              ...expense,
+              sheetsSpreadsheetId: sheetsConfig.spreadsheetId,
+              sheetsRefreshToken: sheetsConfig.refreshToken,
+            }),
           })
           const json = (await res.json()) as { ok: boolean }
           if (json.ok) dequeueSync(id, 'sheets')

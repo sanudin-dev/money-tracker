@@ -27,7 +27,11 @@
 // ✓ correct — reads localStorage once at mount
 const [checked, setChecked] = useState<Record<string, boolean>>(() => {
   if (typeof window === 'undefined') return {}
-  try { return JSON.parse(localStorage.getItem(KEY) ?? '{}') } catch { return {} }
+  try {
+    return JSON.parse(localStorage.getItem(KEY) ?? '{}')
+  } catch {
+    return {}
+  }
 })
 
 // ✗ wrong — causes cascading render, triggers lint rule

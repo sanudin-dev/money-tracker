@@ -14,7 +14,10 @@ import type { Expense } from '@/types'
 type MonthState = { year: number; month: number }
 
 function formatMonthLabel(year: number, month: number): string {
-  return new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  return new Date(year, month - 1, 1).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 function formatDayHeader(dateStr: string): string {
@@ -56,7 +59,12 @@ function isCurrentMonth(m: MonthState): boolean {
 export function HistoryClient() {
   const { config } = useConfig()
   const currencyCode = config.currencyCode ?? detectDefaultCurrency()
-  const { syncing: sheetsSyncing, sync: syncSheets, result: syncResult, error: syncError } = useSheetsSync()
+  const {
+    syncing: sheetsSyncing,
+    sync: syncSheets,
+    result: syncResult,
+    error: syncError,
+  } = useSheetsSync()
 
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
@@ -114,15 +122,13 @@ export function HistoryClient() {
 
   return (
     <div className="flex flex-col gap-4">
-      {menuOpenId && (
-        <div className="fixed inset-0 z-10" onClick={() => setMenuOpenId(null)} />
-      )}
+      {menuOpenId && <div className="fixed inset-0 z-10" onClick={() => setMenuOpenId(null)} />}
 
       {editingExpense && (
         <EditExpenseModal
           expense={editingExpense}
           onSave={(updated) => {
-            setExpenses((prev) => prev.map((e) => e.id === updated.id ? updated : e))
+            setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)))
             setEditingExpense(null)
           }}
           onClose={() => setEditingExpense(null)}
@@ -130,15 +136,21 @@ export function HistoryClient() {
       )}
 
       {confirmDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setConfirmDeleteId(null)}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={() => setConfirmDeleteId(null)}
+        >
           <div className="absolute inset-0 bg-black/40" />
           <div
             className="relative z-10 mx-4 w-full max-w-sm rounded-2xl bg-white p-6 dark:bg-zinc-900"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Delete expense?</p>
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              Delete expense?
+            </p>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              This removes it from your local history only. If Google Sheets is connected, the row stays in your spreadsheet — syncing will bring it back.
+              This removes it from your local history only. If Google Sheets is connected, the row
+              stays in your spreadsheet — syncing will bring it back.
             </p>
             <div className="mt-5 flex gap-3">
               <button
@@ -150,7 +162,10 @@ export function HistoryClient() {
               </button>
               <button
                 type="button"
-                onClick={() => { handleDelete(confirmDeleteId); setConfirmDeleteId(null) }}
+                onClick={() => {
+                  handleDelete(confirmDeleteId)
+                  setConfirmDeleteId(null)
+                }}
                 className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
               >
                 Delete
@@ -196,7 +211,14 @@ export function HistoryClient() {
           aria-label="Previous month"
           className="rounded-md p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-4 w-4"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </button>
@@ -210,7 +232,14 @@ export function HistoryClient() {
           aria-label="Next month"
           className="rounded-md p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 disabled:pointer-events-none disabled:opacity-30 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-4 w-4"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
         </button>
@@ -231,14 +260,25 @@ export function HistoryClient() {
                   {formatCurrency(monthTotal, currencyCode)}
                 </span>
               </span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
-                className={`h-3.5 w-3.5 transition-transform ${categoryOpen ? 'rotate-180' : ''}`}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className={`h-3.5 w-3.5 transition-transform ${categoryOpen ? 'rotate-180' : ''}`}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
             <button
               type="button"
-              onClick={() => exportToCsv(filtered, `${selectedMonth.year}-${String(selectedMonth.month).padStart(2, '0')}`)}
+              onClick={() =>
+                exportToCsv(
+                  filtered,
+                  `${selectedMonth.year}-${String(selectedMonth.month).padStart(2, '0')}`
+                )
+              }
               className="rounded-md px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
             >
               Export CSV
@@ -317,32 +357,74 @@ export function HistoryClient() {
                         <button
                           type="button"
                           aria-label="More options"
-                          onClick={(e) => { e.stopPropagation(); setMenuOpenId((id) => id === expense.id ? null : expense.id) }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setMenuOpenId((id) => (id === expense.id ? null : expense.id))
+                          }}
                           className="rounded-md p-1 text-zinc-300 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="h-4 w-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                            />
                           </svg>
                         </button>
                         {menuOpenId === expense.id && (
                           <div className="absolute right-0 bottom-full mb-1 z-20 min-w-[110px] overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
                             <button
                               type="button"
-                              onClick={() => { setEditingExpense(expense); setMenuOpenId(null) }}
+                              onClick={() => {
+                                setEditingExpense(expense)
+                                setMenuOpenId(null)
+                              }}
                               className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-700"
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="h-4 w-4"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"
+                                />
                               </svg>
                               Edit
                             </button>
                             <button
                               type="button"
-                              onClick={() => { setConfirmDeleteId(expense.id); setMenuOpenId(null) }}
+                              onClick={() => {
+                                setConfirmDeleteId(expense.id)
+                                setMenuOpenId(null)
+                              }}
                               className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-500 hover:bg-zinc-50 dark:hover:bg-zinc-700"
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="h-4 w-4"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                />
                               </svg>
                               Delete
                             </button>

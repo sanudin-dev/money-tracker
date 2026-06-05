@@ -59,22 +59,38 @@ function ZapierSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Use Zapier&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhooks by Zapier</strong> trigger to receive expenses and route them to any app Zapier supports.
+        Use Zapier&apos;s{' '}
+        <strong className="text-zinc-700 dark:text-zinc-300">Webhooks by Zapier</strong> trigger to
+        receive expenses and route them to any app Zapier supports.
       </p>
       <Step n={1}>
-        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">zapier.com</span> (free tier is enough).</span>
+        <span>
+          Sign up at{' '}
+          <span className="font-medium text-zinc-800 dark:text-zinc-200">zapier.com</span> (free
+          tier is enough).
+        </span>
       </Step>
       <Step n={2}>
-        <span>Create a new Zap — <strong>Trigger</strong>:</span>
+        <span>
+          Create a new Zap — <strong>Trigger</strong>:
+        </span>
         <ul className="ml-4 list-disc space-y-1">
-          <li>App: <strong>Webhooks by Zapier</strong> → Event: <strong>Catch Hook</strong></li>
-          <li>Click <em>Continue</em>. Zapier shows a webhook URL — <strong>copy it.</strong></li>
+          <li>
+            App: <strong>Webhooks by Zapier</strong> → Event: <strong>Catch Hook</strong>
+          </li>
+          <li>
+            Click <em>Continue</em>. Zapier shows a webhook URL — <strong>copy it.</strong>
+          </li>
         </ul>
       </Step>
       <Step n={3}>
-        <span><strong>Action</strong> — pick any app Zapier supports. To write to Google Sheets:</span>
+        <span>
+          <strong>Action</strong> — pick any app Zapier supports. To write to Google Sheets:
+        </span>
         <ul className="ml-4 list-disc space-y-1">
-          <li>App: <strong>Google Sheets</strong> → Event: <strong>Create Spreadsheet Row</strong></li>
+          <li>
+            App: <strong>Google Sheets</strong> → Event: <strong>Create Spreadsheet Row</strong>
+          </li>
           <li>Connect your Google account, pick your spreadsheet and sheet tab</li>
           <li>
             Map fields from the payload:
@@ -85,11 +101,16 @@ function ZapierSteps() {
       <Step n={4}>
         <p>
           Turn on the Zap, then go to{' '}
-          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
-          paste your webhook URL, and click <strong>Save</strong>.
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , paste your webhook URL, and click <strong>Save</strong>.
         </p>
       </Step>
-      <Note>Test by submitting one expense — Zapier&apos;s task history confirms whether the row was added.</Note>
+      <Note>
+        Test by submitting one expense — Zapier&apos;s task history confirms whether the row was
+        added.
+      </Note>
     </div>
   )
 }
@@ -98,23 +119,37 @@ function MakeSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Use Make&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhooks</strong> module as the trigger to receive expenses and route them to any app Make supports.
+        Use Make&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhooks</strong>{' '}
+        module as the trigger to receive expenses and route them to any app Make supports.
       </p>
       <Step n={1}>
-        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">make.com</span> (free tier is enough).</span>
+        <span>
+          Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">make.com</span>{' '}
+          (free tier is enough).
+        </span>
       </Step>
       <Step n={2}>
         <span>Create a new Scenario — add the first module:</span>
         <ul className="ml-4 list-disc space-y-1">
-          <li>Search for <strong>Webhooks</strong> → select <strong>Custom webhook</strong></li>
-          <li>Click <strong>Add</strong> to create a webhook — Make shows a URL. <strong>Copy it.</strong></li>
-          <li>Click <em>OK</em>, then <strong>Determine data structure</strong> and submit one expense so Make learns the payload shape.</li>
+          <li>
+            Search for <strong>Webhooks</strong> → select <strong>Custom webhook</strong>
+          </li>
+          <li>
+            Click <strong>Add</strong> to create a webhook — Make shows a URL.{' '}
+            <strong>Copy it.</strong>
+          </li>
+          <li>
+            Click <em>OK</em>, then <strong>Determine data structure</strong> and submit one expense
+            so Make learns the payload shape.
+          </li>
         </ul>
       </Step>
       <Step n={3}>
         <span>Add an action module. To write to Google Sheets:</span>
         <ul className="ml-4 list-disc space-y-1">
-          <li><strong>Google Sheets</strong> → <strong>Add a Row</strong></li>
+          <li>
+            <strong>Google Sheets</strong> → <strong>Add a Row</strong>
+          </li>
           <li>Connect your Google account, pick your spreadsheet and sheet</li>
           <li>
             Map fields from the webhook data:
@@ -125,11 +160,16 @@ function MakeSteps() {
       <Step n={4}>
         <p>
           Turn on the scenario (toggle bottom-left), then go to{' '}
-          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
-          paste your webhook URL, and click <strong>Save</strong>.
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , paste your webhook URL, and click <strong>Save</strong>.
         </p>
       </Step>
-      <Note>Make&apos;s scenario history shows each run — use it to confirm the expense was received and processed.</Note>
+      <Note>
+        Make&apos;s scenario history shows each run — use it to confirm the expense was received and
+        processed.
+      </Note>
     </div>
   )
 }
@@ -138,30 +178,52 @@ function PipedreamSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Pipedream&apos;s <strong className="text-zinc-700 dark:text-zinc-300">HTTP / Webhook</strong> trigger gives you a URL and lets you build action steps with pre-built app integrations or custom code.
+        Pipedream&apos;s{' '}
+        <strong className="text-zinc-700 dark:text-zinc-300">HTTP / Webhook</strong> trigger gives
+        you a URL and lets you build action steps with pre-built app integrations or custom code.
       </p>
       <Step n={1}>
-        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">pipedream.com</span> (free tier is enough).</span>
+        <span>
+          Sign up at{' '}
+          <span className="font-medium text-zinc-800 dark:text-zinc-200">pipedream.com</span> (free
+          tier is enough).
+        </span>
       </Step>
       <Step n={2}>
         <span>Create a new workflow:</span>
         <ul className="ml-4 list-disc space-y-1">
-          <li>Trigger: <strong>HTTP / Webhook</strong> → <strong>New Requests</strong></li>
-          <li>Pipedream shows a unique endpoint URL — <strong>copy it.</strong></li>
+          <li>
+            Trigger: <strong>HTTP / Webhook</strong> → <strong>New Requests</strong>
+          </li>
+          <li>
+            Pipedream shows a unique endpoint URL — <strong>copy it.</strong>
+          </li>
         </ul>
       </Step>
       <Step n={3}>
-        <span>Add an action step. Fields arrive under <Code>steps.trigger.event.body</Code> — for example <Code>steps.trigger.event.body.amount</Code> or <Code>steps.trigger.event.body.category</Code>.</span>
-        <span>For a ready-made integration, search the app you want (e.g. <strong>Google Sheets → Add Single Row</strong>) and map the columns.</span>
+        <span>
+          Add an action step. Fields arrive under <Code>steps.trigger.event.body</Code> — for
+          example <Code>steps.trigger.event.body.amount</Code> or{' '}
+          <Code>steps.trigger.event.body.category</Code>.
+        </span>
+        <span>
+          For a ready-made integration, search the app you want (e.g.{' '}
+          <strong>Google Sheets → Add Single Row</strong>) and map the columns.
+        </span>
       </Step>
       <Step n={4}>
         <p>
           Deploy the workflow, then go to{' '}
-          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
-          paste your endpoint URL, and click <strong>Save</strong>.
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , paste your endpoint URL, and click <strong>Save</strong>.
         </p>
       </Step>
-      <Note>Pipedream&apos;s event inspector shows each incoming request in real time — useful for confirming the payload shape before building action steps.</Note>
+      <Note>
+        Pipedream&apos;s event inspector shows each incoming request in real time — useful for
+        confirming the payload shape before building action steps.
+      </Note>
     </div>
   )
 }
@@ -170,34 +232,58 @@ function N8nSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        n8n&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhook</strong> node exposes an endpoint you control — available on n8n Cloud or self-hosted.
+        n8n&apos;s <strong className="text-zinc-700 dark:text-zinc-300">Webhook</strong> node
+        exposes an endpoint you control — available on n8n Cloud or self-hosted.
       </p>
       <Step n={1}>
-        <span>Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">n8n.io</span> (cloud) or set up a self-hosted instance.</span>
+        <span>
+          Sign up at <span className="font-medium text-zinc-800 dark:text-zinc-200">n8n.io</span>{' '}
+          (cloud) or set up a self-hosted instance.
+        </span>
       </Step>
       <Step n={2}>
-        <span>Create a new workflow — add a <strong>Webhook</strong> node:</span>
+        <span>
+          Create a new workflow — add a <strong>Webhook</strong> node:
+        </span>
         <ul className="ml-4 list-disc space-y-1">
-          <li>HTTP Method: <strong>POST</strong></li>
-          <li>Authentication: <strong>None</strong> (or add header auth if preferred)</li>
-          <li>Copy the <strong>Production URL</strong> shown in the node panel.</li>
+          <li>
+            HTTP Method: <strong>POST</strong>
+          </li>
+          <li>
+            Authentication: <strong>None</strong> (or add header auth if preferred)
+          </li>
+          <li>
+            Copy the <strong>Production URL</strong> shown in the node panel.
+          </li>
         </ul>
       </Step>
       <Step n={3}>
-        <span>Add an action node. Fields arrive in <Code>{'{{ $json.body }}'}</Code> — for example to write to Google Sheets:</span>
+        <span>
+          Add an action node. Fields arrive in <Code>{'{{ $json.body }}'}</Code> — for example to
+          write to Google Sheets:
+        </span>
         <ul className="ml-4 list-disc space-y-1">
-          <li>Add a <strong>Google Sheets</strong> node → <strong>Append Row to Sheet</strong></li>
-          <li>Map columns using expressions like <Code>{'{{ $json.body.amount }}'}</Code></li>
+          <li>
+            Add a <strong>Google Sheets</strong> node → <strong>Append Row to Sheet</strong>
+          </li>
+          <li>
+            Map columns using expressions like <Code>{'{{ $json.body.amount }}'}</Code>
+          </li>
         </ul>
       </Step>
       <Step n={4}>
         <p>
           Activate the workflow (toggle top-right), then go to{' '}
-          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
-          paste your Production URL, and click <strong>Save</strong>.
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , paste your Production URL, and click <strong>Save</strong>.
         </p>
       </Step>
-      <Note>Use the Test URL during setup to inspect the payload in n8n&apos;s execution log — switch to the Production URL before saving in Settings.</Note>
+      <Note>
+        Use the Test URL during setup to inspect the payload in n8n&apos;s execution log — switch to
+        the Production URL before saving in Settings.
+      </Note>
     </div>
   )
 }
@@ -206,30 +292,36 @@ function SheetsSteps() {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Expenses are written directly to Google Sheets via the API. The history page can read them back and you can export CSV — all from inside the app.
+        Expenses are written directly to Google Sheets via the API. The history page can read them
+        back and you can export CSV — all from inside the app.
       </p>
 
       <Step n={1}>
         <span>
           Create an empty Google Sheet — no header row needed. The app writes{' '}
-          <Code>ID | Amount | Category | Description | Date | Created At</Code>{' '}
-          to row 1 automatically on the first sync.
+          <Code>ID | Amount | Category | Description | Date | Created At</Code> to row 1
+          automatically on the first sync.
         </span>
         <span>
           Copy the <strong>Spreadsheet ID</strong> from the URL:{' '}
-          <Code>…/spreadsheets/d/<strong>YOUR_ID</strong>/edit</Code>
+          <Code>
+            …/spreadsheets/d/<strong>YOUR_ID</strong>/edit
+          </Code>
         </span>
       </Step>
 
       <Step n={2}>
         <p>
           Go to{' '}
-          <Link href="/settings/connect" className="underline underline-offset-2">Connect</Link>,
-          select <strong>Sheets API</strong>, enter your Spreadsheet ID, then click{' '}
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , select <strong>Sheets API</strong>, enter your Spreadsheet ID, then click{' '}
           <strong>Connect Google Sheets</strong>. Approve the Google consent screen — done.
         </p>
         <Note>
-          The app stores your connection so you only need to sign in once. No tokens to copy or manage.
+          The app stores your connection so you only need to sign in once. No tokens to copy or
+          manage.
         </Note>
       </Step>
 
@@ -237,7 +329,9 @@ function SheetsSteps() {
         <p className="text-xs text-zinc-500 dark:text-zinc-400">
           <span className="font-medium text-zinc-700 dark:text-zinc-300">Developer note:</span>{' '}
           Sheets API requires a one-time Google Cloud setup before users can connect.{' '}
-          <Link href="/dev" className="underline underline-offset-2">See the Developer page →</Link>
+          <Link href="/dev" className="underline underline-offset-2">
+            See the Developer page →
+          </Link>
         </p>
       </div>
     </div>
@@ -301,7 +395,10 @@ export function SetupTabs() {
   const [checked, setChecked] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {}
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.GUIDE_CHECKLIST) ?? '{}') as Record<string, boolean>
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.GUIDE_CHECKLIST) ?? '{}') as Record<
+        string,
+        boolean
+      >
     } catch {
       return {}
     }

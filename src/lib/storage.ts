@@ -83,9 +83,12 @@ export async function getExpenseById(id: string): Promise<Expense | undefined> {
 }
 
 /** Updates editable fields of an expense in IndexedDB. Does not affect the remote sheet. */
-export async function updateExpense(id: string, updates: Partial<Omit<Expense, 'id' | 'createdAt'>>): Promise<void> {
+export async function updateExpense(
+  id: string,
+  updates: Partial<Omit<Expense, 'id' | 'createdAt'>>
+): Promise<void> {
   const db = await getDb()
-  const existing = await db.get(STORE, id) as Expense | undefined
+  const existing = (await db.get(STORE, id)) as Expense | undefined
   if (!existing) return
   await db.put(STORE, { ...existing, ...updates })
 }

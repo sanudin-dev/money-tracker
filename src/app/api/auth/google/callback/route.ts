@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         grant_type: 'authorization_code',
       }),
     })
-    tokens = await res.json() as TokenResponse
+    tokens = (await res.json()) as TokenResponse
     if (!res.ok || !tokens.refresh_token) {
       return NextResponse.redirect(`${origin}/settings/connect?authError=token_failed`)
     }
@@ -48,10 +48,10 @@ export async function GET(req: NextRequest) {
   if (tokens.access_token) {
     try {
       const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: { 'Authorization': `Bearer ${tokens.access_token}` },
+        headers: { Authorization: `Bearer ${tokens.access_token}` },
       })
       if (res.ok) {
-        const user = await res.json() as { email?: string }
+        const user = (await res.json()) as { email?: string }
         email = user.email ?? ''
       }
     } catch {

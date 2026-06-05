@@ -24,11 +24,11 @@ Track personal expenses locally with optional sync to a webhook (Zapier, Make, P
 
 Both integrations are optional and independent — enable neither, one, or both at the same time.
 
-| | Webhook | Sheets API |
-|---|---|---|
-| Setup | ~5 min | ~2 min |
+|              | Webhook                                                                              | Sheets API                        |
+| ------------ | ------------------------------------------------------------------------------------ | --------------------------------- |
+| Setup        | ~5 min                                                                               | ~2 min                            |
 | What it does | Sends each expense to any webhook-connected app (Zapier, Make, Pipedream, n8n, etc.) | Writes directly to a Google Sheet |
-| Cost | Depends on platform | Free |
+| Cost         | Depends on platform                                                                  | Free                              |
 
 See the [Integrations page](https://mt.sanudin.dev/compare) for details.
 

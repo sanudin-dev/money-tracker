@@ -27,13 +27,13 @@ export type IntegrationType = 'webhook' | 'sheets'
 
 export interface WebhookIntegration {
   webhookUrl: string
-  appId?: string     // optional; included in every payload for filter steps
+  appId?: string // optional; included in every payload for filter steps
 }
 
 export interface SheetsIntegration {
   spreadsheetId: string
-  refreshToken: string    // AES-256-GCM encrypted blob; decrypted server-side on each request
-  connectedEmail: string  // display only
+  refreshToken: string // AES-256-GCM encrypted blob; decrypted server-side on each request
+  connectedEmail: string // display only
 }
 
 export interface Config {
@@ -43,12 +43,12 @@ export interface Config {
 }
 
 export interface Expense {
-  id: string          // crypto.randomUUID() with Math.random fallback
+  id: string // crypto.randomUUID() with Math.random fallback
   amount: number
   category: string
   description: string
-  date: string        // YYYY-MM-DD
-  createdAt: string   // ISO timestamp
+  date: string // YYYY-MM-DD
+  createdAt: string // ISO timestamp
 }
 ```
 
@@ -59,12 +59,14 @@ An integration is "active" when its object is present in Config. Removing the ob
 ## Sync queue
 
 Per-integration retry queues stored in localStorage:
+
 - `mt_sync_queue_webhook` — expense IDs that failed to push to the webhook
 - `mt_sync_queue_sheets` — expense IDs that failed to push to Sheets API
 
 Each queue is processed independently on reconnect. A retry only hits the failed integration — a prior successful push is never duplicated.
 
 Queue helpers in `src/lib/syncQueue.ts`:
+
 - `getSyncQueue(integration)` → `string[]`
 - `enqueueSync(id, integration)` → `void`
 - `dequeueSync(id, integration)` → `void`

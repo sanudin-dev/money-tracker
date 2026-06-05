@@ -8,12 +8,12 @@
 
 Accessed via `useConfig` hook. Keys defined in `src/lib/constants.ts`.
 
-| Key | Type | Contents |
-|---|---|---|
-| `mt_config` | `Partial<Config>` | Active integrations config, currency code |
-| `mt_guide_checklist` | `Record<string, boolean>` | Persistent checkbox state on `/settings/guide` |
-| `mt_sync_queue_webhook` | `string[]` | Expense IDs queued for offline webhook push |
-| `mt_sync_queue_sheets` | `string[]` | Expense IDs queued for offline Sheets push |
+| Key                     | Type                      | Contents                                       |
+| ----------------------- | ------------------------- | ---------------------------------------------- |
+| `mt_config`             | `Partial<Config>`         | Active integrations config, currency code      |
+| `mt_guide_checklist`    | `Record<string, boolean>` | Persistent checkbox state on `/settings/guide` |
+| `mt_sync_queue_webhook` | `string[]`                | Expense IDs queued for offline webhook push    |
+| `mt_sync_queue_sheets`  | `string[]`                | Expense IDs queued for offline Sheets push     |
 
 ---
 

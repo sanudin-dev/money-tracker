@@ -7,13 +7,13 @@ Next.js 16 App Router PWA. No backend database. All user data in the browser.
 
 ## Docs index
 
-| Document | Covers |
-|---|---|
+| Document                             | Covers                                                     |
+| ------------------------------------ | ---------------------------------------------------------- |
 | [Architecture](docs/architecture.md) | Data flow, core types, bidirectional sync, OAuth flow, PWA |
-| [Storage](docs/storage.md) | localStorage keys, IndexedDB schema, sync queue |
-| [API routes](docs/api-routes.md) | All four routes, request shapes, security model |
-| [Components](docs/components.md) | What each component owns and renders |
-| [Conventions](docs/conventions.md) | TypeScript rules, Tailwind, patterns, anti-patterns |
+| [Storage](docs/storage.md)           | localStorage keys, IndexedDB schema, sync queue            |
+| [API routes](docs/api-routes.md)     | All four routes, request shapes, security model            |
+| [Components](docs/components.md)     | What each component owns and renders                       |
+| [Conventions](docs/conventions.md)   | TypeScript rules, Tailwind, patterns, anti-patterns        |
 
 ---
 

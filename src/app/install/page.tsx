@@ -57,11 +57,15 @@ function AndroidGuide() {
       </div>
 
       <Step n={1} title="Open the app in a supported browser">
-        <span>Chrome, Samsung Internet, and Edge all support installation. Firefox on Android does not.</span>
+        <span>
+          Chrome, Samsung Internet, and Edge all support installation. Firefox on Android does not.
+        </span>
       </Step>
 
       <Step n={2} title="Open the browser menu">
-        <span>Tap the <strong>three-dot menu (⋮)</strong> in the top-right corner of the browser.</span>
+        <span>
+          Tap the <strong>three-dot menu (⋮)</strong> in the top-right corner of the browser.
+        </span>
       </Step>
 
       <Step n={3} title='Tap "Add to Home Screen" or "Install app"'>
@@ -69,7 +73,9 @@ function AndroidGuide() {
       </Step>
 
       <Step n={4} title='Tap "Add" to confirm'>
-        <span>The app icon appears on your home screen and launches like a native app — no browser bar.</span>
+        <span>
+          The app icon appears on your home screen and launches like a native app — no browser bar.
+        </span>
       </Step>
 
       <Note>
@@ -99,29 +105,27 @@ function IOSGuide() {
       </Note>
 
       <Step n={1} title="Open the app in Safari">
-        <span>
-          If you&apos;re in another browser, copy the URL and paste it into Safari.
-        </span>
+        <span>If you&apos;re in another browser, copy the URL and paste it into Safari.</span>
       </Step>
 
       <Step n={2} title="Tap the Share button">
         <span>
-          Tap the <strong>Share icon</strong> — a box with an arrow pointing up — at the
-          bottom centre of the Safari screen.
+          Tap the <strong>Share icon</strong> — a box with an arrow pointing up — at the bottom
+          centre of the Safari screen.
         </span>
       </Step>
 
       <Step n={3} title='Tap "Add to Home Screen"'>
         <span>
-          Scroll down in the share sheet. It has a <strong>plus icon inside a square</strong>.
-          If you don&apos;t see it, scroll further — it&apos;s not always at the top.
+          Scroll down in the share sheet. It has a <strong>plus icon inside a square</strong>. If
+          you don&apos;t see it, scroll further — it&apos;s not always at the top.
         </span>
       </Step>
 
       <Step n={4} title='Tap "Add" to confirm'>
         <span>
-          Tap <strong>Add</strong> in the top-right corner. The app icon appears on your home
-          screen and opens full-screen without the Safari browser bar.
+          Tap <strong>Add</strong> in the top-right corner. The app icon appears on your home screen
+          and opens full-screen without the Safari browser bar.
         </span>
       </Step>
     </div>
@@ -151,14 +155,14 @@ function DesktopGuide() {
 
       <Step n={3} title='Click "Install"'>
         <span>
-          Click the icon and confirm by clicking <strong>Install</strong> in the pop-up. The
-          app opens as a standalone window — no tabs, no browser chrome.
+          Click the icon and confirm by clicking <strong>Install</strong> in the pop-up. The app
+          opens as a standalone window — no tabs, no browser chrome.
         </span>
       </Step>
 
       <Note>
-        Don&apos;t see the install icon? Refresh the page and wait for it to fully load. On
-        first visit it can take a moment to appear.
+        Don&apos;t see the install icon? Refresh the page and wait for it to fully load. On first
+        visit it can take a moment to appear.
       </Note>
 
       <div className="rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2.5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400">
@@ -175,8 +179,19 @@ export default function InstallPage() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3.75h3" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-5 w-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3.75h3"
+            />
           </svg>
           Install the app
         </h1>

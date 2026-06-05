@@ -1,6 +1,13 @@
 'use client'
 
-import { createContext, useContext, useCallback, useSyncExternalStore, createElement, useEffect } from 'react'
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useSyncExternalStore,
+  createElement,
+  useEffect,
+} from 'react'
 import type { ReactNode } from 'react'
 import type { Config } from '@/types'
 import { getConfig, setConfig } from '@/lib/storage'
@@ -20,7 +27,9 @@ const _listeners = new Set<() => void>()
 
 function subscribe(listener: () => void): () => void {
   _listeners.add(listener)
-  return () => { _listeners.delete(listener) }
+  return () => {
+    _listeners.delete(listener)
+  }
 }
 
 function getSnapshot(): Partial<Config> {
@@ -55,7 +64,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     if (!config.currencyCode) {
       update({ currencyCode: detectDefaultCurrency() })
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return createElement(ConfigContext.Provider, { value: { config, update } }, children)

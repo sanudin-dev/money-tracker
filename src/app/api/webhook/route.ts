@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
 
   const parsed = webhookRequestSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid payload.' }, { status: 400 })
+    return NextResponse.json(
+      { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid payload.' },
+      { status: 400 }
+    )
   }
 
   const { webhookUrl, ...expense } = parsed.data
@@ -28,9 +31,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (!res.ok) {
-    const hint = res.status === 404
-      ? 'Webhook not found — make sure the URL is correct and the automation is active.'
-      : `Webhook returned ${res.status}.`
+    const hint =
+      res.status === 404
+        ? 'Webhook not found — make sure the URL is correct and the automation is active.'
+        : `Webhook returned ${res.status}.`
     return NextResponse.json({ ok: false, error: hint }, { status: 502 })
   }
 

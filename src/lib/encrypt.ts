@@ -6,7 +6,8 @@ function getKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY
   if (!key) throw new Error('ENCRYPTION_KEY env var is not set.')
   const buf = Buffer.from(key, 'base64')
-  if (buf.length !== 32) throw new Error('ENCRYPTION_KEY must be exactly 32 bytes (base64-encoded).')
+  if (buf.length !== 32)
+    throw new Error('ENCRYPTION_KEY must be exactly 32 bytes (base64-encoded).')
   return buf
 }
 
@@ -24,7 +25,8 @@ export function encrypt(plaintext: string): string {
 export function decrypt(ciphertext: string): string {
   const key = getKey()
   const parts = ciphertext.split(':')
-  if (parts.length !== 3) throw new Error('Invalid encrypted token format — please reconnect Google Sheets.')
+  if (parts.length !== 3)
+    throw new Error('Invalid encrypted token format — please reconnect Google Sheets.')
   const [ivB64, tagB64, dataB64] = parts
   const iv = Buffer.from(ivB64, 'base64')
   const tag = Buffer.from(tagB64, 'base64')

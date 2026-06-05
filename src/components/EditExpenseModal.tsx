@@ -4,7 +4,12 @@ import { useState, useMemo, useEffect } from 'react'
 import { useConfig } from '@/hooks/useConfig'
 import { expenseSchema } from '@/lib/schema'
 import { updateExpense } from '@/lib/storage'
-import { formatCurrency, getCurrencyFractionDigits, getCurrencySymbol, detectDefaultCurrency } from '@/lib/currency'
+import {
+  formatCurrency,
+  getCurrencyFractionDigits,
+  getCurrencySymbol,
+  detectDefaultCurrency,
+} from '@/lib/currency'
 import { evaluateAmount } from '@/lib/math'
 import { CATEGORIES } from '@/lib/categories'
 import type { Expense } from '@/types'
@@ -84,7 +89,9 @@ export function EditExpenseModal({ expense, onSave, onClose }: Props) {
       >
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Edit Expense</h2>
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              Edit Expense
+            </h2>
             {(config.webhook || config.sheets) && (
               <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
                 Saved to your device only — connected integrations won&apos;t be updated.
@@ -96,7 +103,14 @@ export function EditExpenseModal({ expense, onSave, onClose }: Props) {
             onClick={onClose}
             className="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="h-5 w-5"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
@@ -132,7 +146,9 @@ export function EditExpenseModal({ expense, onSave, onClose }: Props) {
                 ))}
               </div>
             )}
-            {amountPreview && <p className="text-xs text-zinc-400 dark:text-zinc-500">= {amountPreview}</p>}
+            {amountPreview && (
+              <p className="text-xs text-zinc-400 dark:text-zinc-500">= {amountPreview}</p>
+            )}
             {fieldErrors.amount && <p className="text-xs text-red-500">{fieldErrors.amount}</p>}
           </div>
 
@@ -146,12 +162,25 @@ export function EditExpenseModal({ expense, onSave, onClose }: Props) {
               >
                 <option value="">Select category</option>
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4 text-zinc-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="h-4 w-4 text-zinc-400"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                  />
                 </svg>
               </div>
             </div>

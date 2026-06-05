@@ -81,28 +81,28 @@ export type IntegrationType = 'webhook' | 'sheets'
 
 export interface WebhookIntegration {
   webhookUrl: string
-  appId?: string     // optional; forwarded in every payload for filter steps
+  appId?: string // optional; forwarded in every payload for filter steps
 }
 
 export interface SheetsIntegration {
   spreadsheetId: string
-  refreshToken: string    // AES-256-GCM encrypted blob
-  connectedEmail: string  // display only
+  refreshToken: string // AES-256-GCM encrypted blob
+  connectedEmail: string // display only
 }
 
 export interface Config {
   currencyCode: string
-  webhook?: WebhookIntegration   // present = active
-  sheets?: SheetsIntegration     // present = active
+  webhook?: WebhookIntegration // present = active
+  sheets?: SheetsIntegration // present = active
 }
 
 export interface Expense {
-  id: string          // crypto.randomUUID() with Math.random fallback for non-HTTPS
+  id: string // crypto.randomUUID() with Math.random fallback for non-HTTPS
   amount: number
   category: string
   description: string
-  date: string        // YYYY-MM-DD
-  createdAt: string   // ISO timestamp
+  date: string // YYYY-MM-DD
+  createdAt: string // ISO timestamp
 }
 ```
 
@@ -111,17 +111,20 @@ export interface Expense {
 ## How the app works
 
 ### Local-first data flow
+
 1. Expense always saved to IndexedDB — before any API call
 2. History always reads from IndexedDB
 3. CSV export always available (from IndexedDB)
 
 ### Integrations (output channels)
+
 Integrations are independent. Both can be active simultaneously.
 
 - **Webhook**: `POST /api/webhook` with `{ ...expense, webhookUrl, appId? }` — automation platform handles the row
 - **Sheets API**: `POST /api/sheets` with `{ ...expense, sheetsSpreadsheetId, sheetsRefreshToken }` — direct Google Sheets write
 
 ### Offline handling
+
 - If offline when submitting, the expense ID is queued per integration:
   - `mt_sync_queue_webhook` for failed webhook pushes
   - `mt_sync_queue_sheets` for failed Sheets pushes
@@ -151,6 +154,7 @@ Never access storage directly — always go through `src/lib/storage.ts`.
 ## API routes: security model
 
 The API routes are **thin proxies only**. They:
+
 - Accept the user's credentials in the request body (not from env vars)
 - Validate the payload with Zod before forwarding
 - Never log credentials

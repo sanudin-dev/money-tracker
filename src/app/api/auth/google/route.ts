@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
   if (!clientId) {
     return NextResponse.json(
       { error: 'GOOGLE_CLIENT_ID is not configured on this server.' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 
@@ -19,7 +19,5 @@ export async function GET(req: NextRequest) {
     prompt: 'consent',
   })
 
-  return NextResponse.redirect(
-    `https://accounts.google.com/o/oauth2/v2/auth?${params}`,
-  )
+  return NextResponse.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`)
 }

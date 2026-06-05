@@ -13,7 +13,10 @@ export async function POST(req: NextRequest) {
 
   const parsed = sheetsWriteRequestSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid payload.' }, { status: 400 })
+    return NextResponse.json(
+      { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid payload.' },
+      { status: 400 }
+    )
   }
 
   const { sheetsSpreadsheetId, sheetsRefreshToken: encryptedToken, ...expense } = parsed.data
@@ -22,7 +25,10 @@ export async function POST(req: NextRequest) {
   try {
     refreshToken = decrypt(encryptedToken)
   } catch {
-    return NextResponse.json({ ok: false, error: 'Invalid credentials — please reconnect Google Sheets.' }, { status: 401 })
+    return NextResponse.json(
+      { ok: false, error: 'Invalid credentials — please reconnect Google Sheets.' },
+      { status: 401 }
+    )
   }
 
   let accessToken: string
@@ -52,14 +58,20 @@ export async function GET(req: NextRequest) {
 
   const parsed = sheetsReadRequestSchema.safeParse(query)
   if (!parsed.success) {
-    return NextResponse.json({ ok: false, error: 'Missing sheetsSpreadsheetId or sheetsRefreshToken.' }, { status: 400 })
+    return NextResponse.json(
+      { ok: false, error: 'Missing sheetsSpreadsheetId or sheetsRefreshToken.' },
+      { status: 400 }
+    )
   }
 
   let refreshToken: string
   try {
     refreshToken = decrypt(parsed.data.sheetsRefreshToken)
   } catch {
-    return NextResponse.json({ ok: false, error: 'Invalid credentials — please reconnect Google Sheets.' }, { status: 401 })
+    return NextResponse.json(
+      { ok: false, error: 'Invalid credentials — please reconnect Google Sheets.' },
+      { status: 401 }
+    )
   }
 
   let accessToken: string

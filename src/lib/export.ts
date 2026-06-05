@@ -7,9 +7,7 @@ function escape(value: string): string {
 export function exportToCsv(expenses: Expense[], month?: string): void {
   const headers = ['ID', 'Amount', 'Category', 'Description', 'Date', 'Created At']
   const rows = expenses.map((e) =>
-    [e.id, String(e.amount), e.category, e.description, e.date, e.createdAt]
-      .map(escape)
-      .join(',')
+    [e.id, String(e.amount), e.category, e.description, e.date, e.createdAt].map(escape).join(',')
   )
 
   const csv = [headers.join(','), ...rows].join('\r\n')

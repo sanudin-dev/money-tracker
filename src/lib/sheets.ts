@@ -42,7 +42,7 @@ async function fetchSheetNames(spreadsheetId: string, accessToken: string): Prom
 async function createMonthTab(
   spreadsheetId: string,
   accessToken: string,
-  tabName: string,
+  tabName: string
 ): Promise<void> {
   const batchRes = await fetch(`${SHEETS_BASE}/${spreadsheetId}:batchUpdate`, {
     method: 'POST',
@@ -53,8 +53,14 @@ async function createMonthTab(
 
   if (!batchRes.ok) {
     // "already exists" covers: tab created by another user/device, or a concurrent request on the same device.
-    if (isSheetsError(batchData) && batchData.error.message.toLowerCase().includes('already exists')) return
-    const message = isSheetsError(batchData) ? batchData.error.message : `Sheets API error ${batchRes.status}`
+    if (
+      isSheetsError(batchData) &&
+      batchData.error.message.toLowerCase().includes('already exists')
+    )
+      return
+    const message = isSheetsError(batchData)
+      ? batchData.error.message
+      : `Sheets API error ${batchRes.status}`
     throw new Error(message)
   }
 
@@ -65,7 +71,7 @@ async function createMonthTab(
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify({ values: [HEADER_ROW] }),
-    },
+    }
   )
 }
 
@@ -82,7 +88,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
     }),
   })
 
-  const data = await res.json() as { access_token?: string; error?: string }
+  const data = (await res.json()) as { access_token?: string; error?: string }
   if (!res.ok || !data.access_token) {
     throw new Error(data.error ?? 'Failed to refresh Google access token.')
   }
@@ -96,7 +102,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
 export async function appendExpense(
   spreadsheetId: string,
   accessToken: string,
-  expense: Expense,
+  expense: Expense
 ): Promise<void> {
   const tabName = getTabName(expense.date)
   await createMonthTab(spreadsheetId, accessToken, tabName)
@@ -107,9 +113,7 @@ export async function appendExpense(
   const url = `${SHEETS_BASE}/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`
 
   const row = COLUMNS.map((col) =>
-    col === 'createdAt'
-      ? expense.createdAt.slice(0, 19).replace('T', ' ')
-      : String(expense[col])
+    col === 'createdAt' ? expense.createdAt.slice(0, 19).replace('T', ' ') : String(expense[col])
   )
 
   const res = await fetch(url, {
@@ -131,16 +135,14 @@ export async function appendExpense(
  */
 export async function fetchExpenses(
   spreadsheetId: string,
-  accessToken: string,
+  accessToken: string
 ): Promise<Expense[]> {
   const allTabs = await fetchSheetNames(spreadsheetId, accessToken)
   const monthTabs = allTabs.filter((t) => MONTH_TAB_REGEX.test(t))
   if (monthTabs.length === 0) return []
 
   // Single batchGet call for all month tabs — skips header row 1 on each.
-  const params = monthTabs
-    .map((t) => `ranges=${encodeURIComponent(`${t}!A2:F`)}`)
-    .join('&')
+  const params = monthTabs.map((t) => `ranges=${encodeURIComponent(`${t}!A2:F`)}`).join('&')
 
   const res = await fetch(`${SHEETS_BASE}/${spreadsheetId}/values:batchGet?${params}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
