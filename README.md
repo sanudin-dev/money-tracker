@@ -4,6 +4,12 @@ Track personal expenses locally with optional sync to a webhook (Zapier, Make, P
 
 **Live demo → [mt.sanudin.dev](https://mt.sanudin.dev)**
 
+<p align="center">
+  <img src="public/screenshots/history.png" width="32%" alt="History" />
+  <img src="public/screenshots/add-expense.png" width="32%" alt="Add expense" />
+  <img src="public/screenshots/settings.png" width="32%" alt="Settings" />
+</p>
+
 ---
 
 ## Features
@@ -37,6 +43,22 @@ See the [Integrations page](https://mt.sanudin.dev/compare) for details.
 ## Stack
 
 Next.js 16 App Router · TypeScript · Tailwind CSS · IndexedDB (`idb`) · Zod · `@ducanh2912/next-pwa`
+
+---
+
+## Architecture
+
+Money Tracker is **local-first** — all expense data lives in IndexedDB on the user's device. The app works fully offline; the network is only ever used for optional sync.
+
+**Data flow:**
+1. Every expense is written to IndexedDB before any network call is made — data is never lost even if sync fails
+2. History always reads from IndexedDB — no remote fetch required
+3. On submit, the app fires sync calls to all active integrations in parallel (webhook and/or Sheets API)
+4. If offline, failed syncs are queued per integration in `localStorage` and retried automatically on reconnect
+
+**API routes are thin proxies** — the Next.js server routes forward credentials and payloads to Google or the webhook URL. They hold no state and access no database. Credentials stay in `localStorage` on the client and are sent with each request.
+
+**Integrations are independent output channels** — both can be active simultaneously. A webhook failure never blocks a Sheets write, and vice versa. Each has its own offline queue.
 
 ---
 
