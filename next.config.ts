@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   },
 }
 
+// Changes on every build so Workbox re-fetches and re-caches the HTML on SW update.
+const buildRevision = String(Date.now())
+
 export default withPWA({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -16,5 +19,12 @@ export default withPWA({
   reloadOnOnline: true,
   fallbacks: {
     document: '/offline',
+  },
+  workboxOptions: {
+    additionalManifestEntries: [
+      { url: '/', revision: buildRevision },
+      { url: '/add', revision: buildRevision },
+      { url: '/settings', revision: buildRevision },
+    ],
   },
 })(nextConfig)
