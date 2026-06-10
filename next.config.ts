@@ -25,6 +25,7 @@ export default withPWA({
       { url: '/', revision: buildRevision },
       { url: '/add', revision: buildRevision },
       { url: '/settings', revision: buildRevision },
+      { url: '/offline', revision: buildRevision },
     ],
   },
 })(nextConfig)
