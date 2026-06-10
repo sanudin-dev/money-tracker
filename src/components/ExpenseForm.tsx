@@ -215,20 +215,30 @@ export function ExpenseForm() {
               className="flex-1 bg-white px-3 py-2 text-sm focus:outline-none dark:bg-zinc-900 dark:text-zinc-100"
             />
           </div>
-          {fractionDigits === 0 && (
-            <div className="flex gap-1.5">
-              {['00', '000', '0000'].map((zeros) => (
+          <div className="flex gap-1.5">
+            {fractionDigits === 0 &&
+              ['00', '000', '0000'].map((zeros) => (
                 <button
                   key={zeros}
                   type="button"
                   onClick={() => setAmount((prev) => (prev || '') + zeros)}
-                  className="rounded-md border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
+                  className="rounded-md border border-zinc-200 px-3.5 py-1 text-xs font-medium text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
                 >
                   +{zeros}
                 </button>
               ))}
-            </div>
-          )}
+            <div className="flex-1" />
+            {['+', '-'].map((op) => (
+              <button
+                key={op}
+                type="button"
+                onClick={() => setAmount((prev) => (prev || '') + op)}
+                className="rounded-md border border-zinc-200 px-3.5 py-1 text-xs font-medium text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
+              >
+                {op}
+              </button>
+            ))}
+          </div>
           {amountPreview && (
             <p className="text-xs text-zinc-400 dark:text-zinc-500">= {amountPreview}</p>
           )}
