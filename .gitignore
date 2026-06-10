@@ -20,6 +20,14 @@
 # production
 /build
 
+# pwa — generated at build time, not committed
+/public/sw.js
+/public/sw.js.map
+/public/workbox-*.js
+/public/workbox-*.js.map
+/public/swe-worker-*.js
+/public/fallback-*.js
+
 # misc
 .DS_Store
 *.pem
