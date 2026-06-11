@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { CurrencyRow } from '@/components/CurrencyRow'
 import { IntegrationRow } from '@/components/IntegrationRow'
+import { ThemeRow } from '@/components/ThemeRow'
 
 export const metadata = {
   title: 'Settings — Money Tracker',
@@ -201,6 +202,9 @@ export default function SettingsPage() {
         <IntegrationRow />
         <div className="border-t border-zinc-100 dark:border-zinc-800">
           <CurrencyRow />
+        </div>
+        <div className="border-t border-zinc-100 dark:border-zinc-800">
+          <ThemeRow />
         </div>
       </div>
 

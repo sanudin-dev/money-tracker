@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { ThemeProvider } from 'next-themes'
 import { ConfigProvider } from '@/hooks/useConfig'
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -16,5 +17,9 @@ export function Providers({ children }: { children: ReactNode }) {
     caches.open('pages').then((cache) => cache.add(pathname)).catch(() => {})
   }, [pathname])
 
-  return <ConfigProvider>{children}</ConfigProvider>
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <ConfigProvider>{children}</ConfigProvider>
+    </ThemeProvider>
+  )
 }

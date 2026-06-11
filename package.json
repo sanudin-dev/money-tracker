@@ -11,7 +11,7 @@
     "url": "https://github.com/sanudin-dev/money-tracker"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
@@ -22,6 +22,7 @@
     "@ducanh2912/next-pwa": "^10.2.6",
     "idb": "^8.0.3",
     "next": "16.2.6",
+    "next-themes": "^0.4.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "zod": "^4.4.3"

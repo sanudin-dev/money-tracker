@@ -233,4 +233,5 @@ The API routes are **thin proxies only**. They:
 ## Next improvements
 
 - **Notion integration** — add as a third `IntegrationType` with database ID + integration token; write to a Notion database via the Notion API directly (same pattern as Sheets API).
-- **Dark/light theme toggle** — currently follows OS `prefers-color-scheme`; add a manual toggle that persists in `localStorage`.
+- **Receipt scan (camera → auto-fill)** — camera button on the Add expense form (file input with `capture="environment"`); use **Tesseract.js** (runs fully in-browser, no API key) to OCR the image, then parse the extracted text to pre-fill amount, date, and description. Gemini API would give better accuracy but requires a developer API key — cannot reuse the user's Google OAuth token since Gemini and Sheets API use different auth systems.
+- **Split bill calculator** — simple version only: a "÷ people" input next to the amount field that divides the total and fills the amount. No new data model needed. Full debt-tracking (who owes whom across sessions) is out of scope for a personal tracker.

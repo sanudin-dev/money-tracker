@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Switch dark mode from media query to class-based so a manual theme toggle works. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Prevent iOS Safari from auto-zooming when an input is focused.
    Safari zooms in whenever an input's font-size is less than 16px.
    Only applied on touch devices so desktop layout (text-sm = 14px) is unchanged. */

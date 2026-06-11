@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geist.className} h-full antialiased`}>
+    <html lang="en" className={`${geist.className} h-full antialiased`} suppressHydrationWarning>
       <body className="flex min-h-full flex-col bg-zinc-50 dark:bg-zinc-950">
         <Providers>
           <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
