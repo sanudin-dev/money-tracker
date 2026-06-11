@@ -136,15 +136,31 @@ function MakeSteps() {
           </li>
           <li>
             Click <strong>Add</strong> to create a webhook — Make shows a URL.{' '}
-            <strong>Copy it.</strong>
-          </li>
-          <li>
-            Click <em>OK</em>, then <strong>Determine data structure</strong> and submit one expense
-            so Make learns the payload shape.
+            <strong>Copy it.</strong> Click <em>OK</em> to close the dialog.
           </li>
         </ul>
       </Step>
       <Step n={3}>
+        <p>
+          Go to{' '}
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , paste your webhook URL, and click <strong>Save</strong>. The app needs the URL saved
+          before it can send Make a test payload.
+        </p>
+      </Step>
+      <Step n={4}>
+        <span>
+          Back in Make, click <strong>Determine data structure</strong> — Make waits for a hit.
+          Switch to the{' '}
+          <Link href="/add" className="underline underline-offset-2">
+            Add expense
+          </Link>{' '}
+          page and submit one expense. Make reads the payload and auto-maps the fields.
+        </span>
+      </Step>
+      <Step n={5}>
         <span>Add an action module. To write to Google Sheets:</span>
         <ul className="ml-4 list-disc space-y-1">
           <li>
@@ -157,14 +173,8 @@ function MakeSteps() {
           </li>
         </ul>
       </Step>
-      <Step n={4}>
-        <p>
-          Turn on the scenario (toggle bottom-left), then go to{' '}
-          <Link href="/settings/connect" className="underline underline-offset-2">
-            Connect
-          </Link>
-          , paste your webhook URL, and click <strong>Save</strong>.
-        </p>
+      <Step n={6}>
+        <p>Turn on the scenario (toggle bottom-left) — you&apos;re all set.</p>
       </Step>
       <Note>
         Make&apos;s scenario history shows each run — use it to confirm the expense was received and
@@ -357,8 +367,9 @@ const WEBHOOK_CHECKLIST: Record<WebhookPlatform, string[]> = {
   make: [
     'Make account created',
     'Scenario created with Webhooks → Custom webhook trigger',
-    'Action module set up and scenario turned on',
     'Webhook URL pasted in Settings → Connect',
+    'Data structure determined (test expense submitted)',
+    'Action module set up and scenario turned on',
   ],
   pipedream: [
     'Pipedream account created',
