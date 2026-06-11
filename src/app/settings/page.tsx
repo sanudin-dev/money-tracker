@@ -219,21 +219,21 @@ export default function SettingsPage() {
           Local-first expense tracking. Sync via webhook or Google Sheets API.
         </p>
         <div className="flex items-center gap-3">
-          <a
-            href="https://github.com/sanudin-dev/money-tracker"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-zinc-400 underline underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
-          >
-            GitHub
-          </a>
-          <span className="text-zinc-300 dark:text-zinc-700">·</span>
           <Link
             href="/privacy"
             className="text-xs text-zinc-400 underline underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
           >
             Privacy Policy
           </Link>
+          <span className="text-zinc-300 dark:text-zinc-700">·</span>
+          <a
+            href="https://github.com/sanudin-dev/money-tracker/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-zinc-400 underline underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
+          >
+            Report an issue
+          </a>
         </div>
       </footer>
     </div>

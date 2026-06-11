@@ -29,6 +29,18 @@ export default function GuidePage() {
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Pick your integration and follow the steps.
         </p>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">
+          Steps may be outdated as platforms update their UI.{' '}
+          <a
+            href="https://github.com/sanudin-dev/money-tracker/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-zinc-600 dark:hover:text-zinc-300"
+          >
+            Report an issue on GitHub
+          </a>{' '}
+          if something looks wrong.
+        </p>
       </div>
 
       <SetupTabs />
