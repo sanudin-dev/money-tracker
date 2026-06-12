@@ -290,7 +290,7 @@ export function HistoryClient() {
         {groups.map(([date, dayExpenses]) => {
           const dayTotal = dayExpenses.reduce((sum, e) => sum + e.amount, 0)
           return (
-            <div key={date} className="flex flex-col gap-2">
+            <div key={date} className="flex flex-col gap-2 pb-5">
               <div className="flex items-center justify-between px-1">
                 <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
                   {formatDayHeader(date)}
