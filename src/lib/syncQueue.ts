@@ -30,3 +30,8 @@ export function dequeueSync(id: string, integration: IntegrationType): void {
   const q = getSyncQueue(integration).filter((i) => i !== id)
   localStorage.setItem(syncQueueKey(integration), JSON.stringify(q))
 }
+
+/** Clears all pending IDs for the given integration (e.g. on disconnect or after a full bidirectional sync). */
+export function clearSyncQueue(integration: IntegrationType): void {
+  localStorage.setItem(syncQueueKey(integration), JSON.stringify([]))
+}

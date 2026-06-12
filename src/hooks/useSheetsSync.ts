@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { useConfig } from '@/hooks/useConfig'
 import { getExpenses, addExpense } from '@/lib/storage'
-import { enqueueSync } from '@/lib/syncQueue'
+import { enqueueSync, clearSyncQueue } from '@/lib/syncQueue'
 import { API } from '@/lib/constants'
 import type { Expense } from '@/types'
 
@@ -93,6 +93,8 @@ export function useSheetsSync() {
       }
 
       setResult({ pulled: toPull.length, pushed })
+      clearSyncQueue('sheets')
+      if (toPull.length > 0) window.dispatchEvent(new CustomEvent('mt:sheets-pull'))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sync failed.')
     } finally {

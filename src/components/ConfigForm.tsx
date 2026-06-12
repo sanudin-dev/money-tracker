@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useConfig } from '@/hooks/useConfig'
 import { API } from '@/lib/constants'
 import { getConfig, getExpenses } from '@/lib/storage'
+import { clearSyncQueue } from '@/lib/syncQueue'
 
 type WebhookErrors = Partial<Record<'webhookUrl', string>>
 type SheetsErrors = Partial<Record<'spreadsheetId' | 'connection', string>>
@@ -99,6 +100,7 @@ export function ConfigForm() {
 
   function handleDisconnectSheets() {
     update({ sheets: undefined })
+    clearSyncQueue('sheets')
     setSheetsOverrides({})
     setSheetsSaved(false)
     setSheetsErrors({})
@@ -107,6 +109,7 @@ export function ConfigForm() {
 
   function handleDisconnectWebhook() {
     update({ webhook: undefined })
+    clearSyncQueue('webhook')
     setWebhookOverrides({})
     setWebhookSaved(false)
     setWebhookErrors({})
@@ -365,10 +368,7 @@ export function ConfigForm() {
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  update({ sheets: undefined })
-                  setAuthError(null)
-                }}
+                onClick={handleDisconnectSheets}
                 className="ml-3 shrink-0 text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
               >
                 Disconnect
@@ -419,9 +419,9 @@ export function ConfigForm() {
         {config.sheets?.refreshToken && (
           <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              To sync expenses with your sheet, use the{' '}
-              <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button on the
-              History page — it checks for duplicates automatically.
+              Use the{' '}
+              <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button to sync
+              expenses with your sheet — it checks for duplicates automatically.
             </p>
           </div>
         )}

@@ -90,7 +90,13 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
 
   const data = (await res.json()) as { access_token?: string; error?: string }
   if (!res.ok || !data.access_token) {
-    throw new Error(data.error ?? 'Failed to refresh Google access token.')
+    if (data.error === 'invalid_grant') {
+      throw new Error('Google Sheets token expired — please reconnect.')
+    }
+    const msg = data.error
+      ? data.error.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase())
+      : 'Failed to refresh Google access token.'
+    throw new Error(msg)
   }
   return data.access_token
 }
