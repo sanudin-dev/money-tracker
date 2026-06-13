@@ -14,16 +14,15 @@ import {
   detectDefaultCurrency,
 } from '@/lib/currency'
 import { evaluateAmount } from '@/lib/math'
-import { CATEGORIES } from '@/lib/categories'
+import { ExpenseFields } from '@/components/ExpenseFields'
+import type { FieldErrors } from '@/components/ExpenseFields'
 import type { Expense } from '@/types'
 
 function todayDate() {
   return new Date().toLocaleDateString('en-CA') // YYYY-MM-DD in local timezone
 }
 
-type FieldErrors = Partial<Record<'amount' | 'category' | 'date', string>>
 type Status = { type: 'success' | 'error' | 'pending'; message: React.ReactNode } | null
-
 type PushOutcome = { ok: boolean; offline?: boolean; error?: string }
 
 export function ExpenseForm() {
@@ -200,130 +199,22 @@ export function ExpenseForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="amount" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Amount
-        </label>
-        <div className="flex overflow-hidden rounded-lg border border-zinc-300 focus-within:ring-2 focus-within:ring-zinc-500 dark:border-zinc-700">
-          <span className="flex items-center border-r border-zinc-300 bg-zinc-50 px-3 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
-            {currencySymbol}
-          </span>
-          <input
-            id="amount"
-            type="text"
-            inputMode="decimal"
-            placeholder={amountPlaceholder}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="flex-1 bg-white px-3 py-2 text-sm focus:outline-none dark:bg-zinc-900 dark:text-zinc-100"
-          />
-        </div>
-        <div className="flex gap-1.5">
-          {fractionDigits === 0 &&
-            ['00', '000', '0000'].map((zeros) => (
-              <button
-                key={zeros}
-                type="button"
-                onClick={() => setAmount((prev) => (prev || '') + zeros)}
-                className="rounded-md border border-zinc-200 px-3.5 py-1 text-xs font-medium text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
-              >
-                +{zeros}
-              </button>
-            ))}
-          <div className="flex-1" />
-          {['+', '-'].map((op) => (
-            <button
-              key={op}
-              type="button"
-              onClick={() => setAmount((prev) => (prev || '') + op)}
-              className="rounded-md border border-zinc-200 px-3.5 py-1 text-xs font-medium text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
-            >
-              {op}
-            </button>
-          ))}
-        </div>
-        {amountPreview && (
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">= {amountPreview}</p>
-        )}
-        {fieldErrors.amount && <p className="text-xs text-red-500">{fieldErrors.amount}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="category"
-          className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Category
-        </label>
-        <div className="relative">
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full appearance-none rounded-lg border border-zinc-300 px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
-          >
-            <option value="">Select category</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="h-4 w-4 text-zinc-400"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-        </div>
-        {fieldErrors.category && <p className="text-xs text-red-500">{fieldErrors.category}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="date" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Date
-        </label>
-        <input
-          id="date"
-          type="date"
-          value={date}
-          max={todayDate()}
-          onChange={(e) => setDate(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
-        />
-        {fieldErrors.date && <p className="text-xs text-red-500">{fieldErrors.date}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="description"
-          className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Description <span className="font-normal text-zinc-400">(optional)</span>
-        </label>
-        <input
-          id="description"
-          type="text"
-          list="description-suggestions"
-          placeholder="e.g. lunch, fruits, coffee"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
-        />
-        {pastDescriptions.length > 0 && (
-          <datalist id="description-suggestions">
-            {pastDescriptions.map((d) => (
-              <option key={d} value={d} />
-            ))}
-          </datalist>
-        )}
-      </div>
+      <ExpenseFields
+        amount={amount}
+        setAmount={setAmount}
+        category={category}
+        setCategory={setCategory}
+        date={date}
+        setDate={setDate}
+        description={description}
+        setDescription={setDescription}
+        fieldErrors={fieldErrors}
+        currencySymbol={currencySymbol}
+        fractionDigits={fractionDigits}
+        amountPlaceholder={amountPlaceholder}
+        amountPreview={amountPreview}
+        pastDescriptions={pastDescriptions}
+      />
 
       {status && (
         <div
@@ -337,10 +228,7 @@ export function ExpenseForm() {
         >
           {status.message}
           {typeof status.message === 'string' && /reconnect/i.test(status.message) && (
-            <Link
-              href="/settings/connect"
-              className="ml-1 font-medium underline underline-offset-2"
-            >
+            <Link href="/settings/connect" className="ml-1 font-medium underline underline-offset-2">
               Go to Connect →
             </Link>
           )}

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Providers } from '@/components/Providers'
 import { BottomNav } from '@/components/BottomNav'
 import './globals.css'
+import { WalletIcon } from 'lucide-react'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -55,11 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
               <Link href="/" className="flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                  <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
-                  <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
-                  <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
-                </svg>
+                <WalletIcon className="h-5 w-5" />
                 Money Tracker
               </Link>
               {/* Hidden on mobile — bottom tab bar handles navigation */}

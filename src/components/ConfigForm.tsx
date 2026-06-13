@@ -5,6 +5,7 @@ import { useConfig } from '@/hooks/useConfig'
 import { API } from '@/lib/constants'
 import { getConfig, getExpenses } from '@/lib/storage'
 import { clearSyncQueue } from '@/lib/syncQueue'
+import { CircleCheckBigIcon } from 'lucide-react'
 
 type WebhookErrors = Partial<Record<'webhookUrl', string>>
 type SheetsErrors = Partial<Record<'spreadsheetId' | 'connection', string>>
@@ -348,18 +349,7 @@ export function ConfigForm() {
           {config.sheets?.refreshToken ? (
             <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 dark:border-green-800/40 dark:bg-green-900/20">
               <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="h-4 w-4 shrink-0 text-green-600 dark:text-green-400"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <CircleCheckBigIcon className="h-4 w-4 shrink-0 text-green-600 dark:text-green-400" />
                 <span className="text-sm text-green-800 dark:text-green-300">
                   {config.sheets.connectedEmail
                     ? `Connected as ${config.sheets.connectedEmail}`

@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react'
 import { useTheme } from 'next-themes'
+import { ChevronDownIcon } from 'lucide-react'
 
 const _noop = () => () => {}
 
@@ -25,16 +26,7 @@ export function ThemeRow() {
             <option value="dark">Dark</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1.5">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="h-3.5 w-3.5 text-zinc-400"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
+            <ChevronDownIcon className="h-3.5 w-3.5 text-zinc-400" />
           </div>
         </div>
       ) : (
