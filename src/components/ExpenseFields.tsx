@@ -141,7 +141,7 @@ export function ExpenseFields({
           value={date}
           max={new Date().toLocaleDateString('en-CA')}
           onChange={(e) => setDate(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          className="w-full appearance-none rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
         />
         {fieldErrors.date && <p className="text-xs text-red-500">{fieldErrors.date}</p>}
       </div>

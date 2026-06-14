@@ -5,6 +5,7 @@ import { useConfig } from '@/hooks/useConfig'
 import { useSyncQueue } from '@/hooks/useSyncQueue'
 import { useSheetsSync } from '@/hooks/useSheetsSync'
 import { useNotionSync } from '@/hooks/useNotionSync'
+import { INTEGRATION_META } from '@/components/icons'
 
 function ErrorLine({ msg, href }: { msg: string; href?: string }) {
   return (
@@ -30,7 +31,6 @@ export function SyncBanner() {
 
   const sheetsConnected = !!config.sheets?.spreadsheetId && !!config.sheets?.refreshToken
   const notionConnected = !!config.notion?.databaseId && !!config.notion?.encryptedToken
-  const bothBidirectional = sheetsConnected && notionConnected
 
   const hasIntegrations = !!(config.webhook?.webhookUrl || sheetsConnected || notionConnected)
   if (!hasIntegrations) return null
@@ -43,9 +43,8 @@ export function SyncBanner() {
     if (notionConnected) void syncNotion()
   }
 
-  function syncLabel(pulled: number, pushed: number, prefix?: string): string {
-    const activity = pulled + pushed === 0 ? 'Up to date' : `↓ ${pulled} pulled · ↑ ${pushed} pushed`
-    return prefix ? `${prefix}: ${activity}` : activity
+  function syncActivity(pulled: number, pushed: number): string {
+    return pulled + pushed === 0 ? 'Up to date' : `↓ ${pulled} pulled · ↑ ${pushed} pushed`
   }
 
   const statusLines: React.ReactNode[] = []
@@ -61,16 +60,20 @@ export function SyncBanner() {
     )
   }
   if (sheetsResult) {
+    const { Icon, label } = INTEGRATION_META.sheets
     statusLines.push(
-      <span key="sheets-res" className="text-zinc-400 dark:text-zinc-500">
-        {syncLabel(sheetsResult.pulled, sheetsResult.pushed, bothBidirectional ? 'Sheets' : undefined)}
+      <span key="sheets-res" className="flex items-center gap-1 text-zinc-400 dark:text-zinc-500">
+        {<Icon className="h-3.5 w-3.5 shrink-0" aria-label={label} />}
+        {syncActivity(sheetsResult.pulled, sheetsResult.pushed)}
       </span>
     )
   }
   if (notionResult) {
+    const { Icon, label } = INTEGRATION_META.notion
     statusLines.push(
-      <span key="notion-res" className="text-zinc-400 dark:text-zinc-500">
-        {syncLabel(notionResult.pulled, notionResult.pushed, bothBidirectional ? 'Notion' : undefined)}
+      <span key="notion-res" className="flex items-center gap-1 text-zinc-400 dark:text-zinc-500">
+        {<Icon className="h-3.5 w-3.5 shrink-0" aria-label={label} />}
+        {syncActivity(notionResult.pulled, notionResult.pushed)}
       </span>
     )
   }

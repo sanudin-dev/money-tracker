@@ -2,7 +2,8 @@
 
 import { useState, Fragment } from 'react'
 import Link from 'next/link'
-import { INTEGRATION_LABELS, STORAGE_KEYS } from '@/lib/constants'
+import { STORAGE_KEYS } from '@/lib/constants'
+import { INTEGRATION_META } from '@/components/icons'
 
 function Code({ children }: { children: React.ReactNode }) {
   return (
@@ -497,11 +498,7 @@ const NOTION_CHECKLIST = [
 
 type Tab = 'webhook' | 'sheets' | 'notion'
 
-const TABS: { value: Tab; label: string }[] = [
-  { value: 'webhook', label: INTEGRATION_LABELS.webhook },
-  { value: 'sheets', label: INTEGRATION_LABELS.sheets },
-  { value: 'notion', label: INTEGRATION_LABELS.notion },
-]
+const TABS: Tab[] = ['webhook', 'sheets', 'notion']
 
 /** Step-by-step setup guide for each integration, with a persistent checklist. */
 export function SetupTabs() {
@@ -536,20 +533,24 @@ export function SetupTabs() {
     <div className="flex flex-col gap-6">
       {/* Top-level tab bar */}
       <div className="flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
-        {TABS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => setTab(value)}
-            className={`flex-1 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
-              tab === value
-                ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
-                : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
+        {TABS.map((value) => {
+          const { label, Icon } = INTEGRATION_META[value]
+          return (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setTab(value)}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+                tab === value
+                  ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
+                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {label}
+            </button>
+          )
+        })}
       </div>
 
       {/* Steps */}

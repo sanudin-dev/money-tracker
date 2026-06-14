@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { API } from '@/lib/constants'
 import { useConfig } from '@/hooks/useConfig'
@@ -50,8 +50,7 @@ export function ExpenseForm() {
     })
   }, [])
 
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false)
 
   const currencyCode = mounted ? (config.currencyCode ?? detectDefaultCurrency()) : ''
   const fractionDigits = useMemo(() => getCurrencyFractionDigits(currencyCode), [currencyCode])
