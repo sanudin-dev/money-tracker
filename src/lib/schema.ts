@@ -18,6 +18,13 @@ export const configSchema = z.object({
     })
     .optional()
     .catch(undefined),
+  notion: z
+    .object({
+      databaseId: z.string().min(1),
+      encryptedToken: z.string().min(1),
+    })
+    .optional()
+    .catch(undefined),
 })
 
 export const expenseSchema = z.object({
@@ -47,4 +54,19 @@ export const sheetsWriteRequestSchema = storedExpenseSchema.extend({
 export const sheetsReadRequestSchema = z.object({
   sheetsSpreadsheetId: z.string().min(1),
   sheetsRefreshToken: z.string().min(1),
+})
+
+export const notionWriteRequestSchema = storedExpenseSchema.extend({
+  notionDatabaseId: z.string().min(1),
+  notionToken: z.string().min(1),
+})
+
+export const notionConnectRequestSchema = z.object({
+  databaseId: z.string().min(1),
+  notionToken: z.string().min(1),
+})
+
+export const notionReadRequestSchema = z.object({
+  notionDatabaseId: z.string().min(1),
+  notionToken: z.string().min(1),
 })

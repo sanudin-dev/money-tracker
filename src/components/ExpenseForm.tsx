@@ -162,9 +162,35 @@ export function ExpenseForm() {
       }
     }
 
+    const pushNotion = async (): Promise<PushOutcome> => {
+      if (!config.notion?.databaseId || !config.notion?.encryptedToken) return { ok: true }
+      try {
+        const res = await fetch(API.NOTION, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...expense,
+            notionDatabaseId: config.notion.databaseId,
+            notionToken: config.notion.encryptedToken,
+          }),
+        })
+        const json = (await res.json()) as { ok: boolean; error?: string }
+        if (!json.ok) {
+          if (res.status !== 401) enqueueSync(expense.id, 'notion')
+          return { ok: false, error: json.error ?? 'Notion sync failed.' }
+        }
+        return { ok: true }
+      } catch {
+        enqueueSync(expense.id, 'notion')
+        if (!navigator.onLine) return { ok: false, offline: true }
+        return { ok: false, error: 'Could not reach Notion.' }
+      }
+    }
+
     const hasIntegrations =
       !!config.webhook?.webhookUrl ||
-      (!!config.sheets?.spreadsheetId && !!config.sheets?.refreshToken)
+      (!!config.sheets?.spreadsheetId && !!config.sheets?.refreshToken) ||
+      (!!config.notion?.databaseId && !!config.notion?.encryptedToken)
 
     if (!hasIntegrations) {
       setStatus({ type: 'success', message: 'Expense saved!' })
@@ -173,12 +199,12 @@ export function ExpenseForm() {
     }
 
     setSubmitting(true)
-    const [webhookResult, sheetsResult] = await Promise.all([pushWebhook(), pushSheets()])
+    const [webhookResult, sheetsResult, notionResult] = await Promise.all([pushWebhook(), pushSheets(), pushNotion()])
     setSubmitting(false)
 
-    const allOk = webhookResult.ok && sheetsResult.ok
-    const anyOffline = webhookResult.offline || sheetsResult.offline
-    const apiErrors = [webhookResult, sheetsResult]
+    const allOk = webhookResult.ok && sheetsResult.ok && notionResult.ok
+    const anyOffline = webhookResult.offline || sheetsResult.offline || notionResult.offline
+    const apiErrors = [webhookResult, sheetsResult, notionResult]
       .filter((r): r is PushOutcome & { error: string } => !r.ok && !r.offline && !!r.error)
       .map((r) => r.error)
       .join('; ')

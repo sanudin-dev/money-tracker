@@ -10,6 +10,7 @@ export function IntegrationStatusLine() {
   const active = [
     config.webhook?.webhookUrl ? INTEGRATION_LABELS.webhook : null,
     config.sheets?.spreadsheetId && config.sheets?.refreshToken ? INTEGRATION_LABELS.sheets : null,
+    config.notion?.databaseId && config.notion?.encryptedToken ? INTEGRATION_LABELS.notion : null,
   ].filter(Boolean)
 
   const label = active.length > 0 ? active.join(' + ') + ' active' : 'Local only'

@@ -3,11 +3,14 @@ import type { IntegrationType } from '@/types'
 export const INTEGRATION_LABELS: Record<IntegrationType, string> = {
   webhook: 'Webhook',
   sheets: 'Sheets API',
+  notion: 'Notion',
 }
 
 export const API = {
   WEBHOOK: '/api/webhook',
   SHEETS: '/api/sheets',
+  NOTION: '/api/notion',
+  NOTION_CONNECT: '/api/notion/connect',
 } as const
 
 export const STORAGE_KEYS = {

@@ -298,6 +298,100 @@ function N8nSteps() {
   )
 }
 
+function NotionSteps() {
+  return (
+    <div className="flex flex-col gap-5">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        Expenses are pushed directly to a{' '}
+        <strong className="text-zinc-700 dark:text-zinc-300">Notion database</strong> using an
+        Integration Token. No OAuth — just a static key you copy once.
+      </p>
+
+      <Step n={1}>
+        <span>Open the Notion developer portal — pick whichever path fits your setup:</span>
+        <ul className="ml-4 list-disc space-y-1">
+          <li>
+            <strong>Browser:</strong> go to{' '}
+            <span className="font-medium text-zinc-800 dark:text-zinc-200">
+              notion.so/developers/connections
+            </span>{' '}
+            and sign in
+          </li>
+          <li>
+            <strong>Desktop app:</strong> open Settings → Connections → click{' '}
+            <strong>Go to developer portal</strong>
+          </li>
+          <li>
+            <strong>Desktop app (alternative):</strong> open any database → <strong>⋯ → Connections → Manage connections</strong> → click{' '}
+            <strong>Go to developer portal</strong>
+          </li>
+        </ul>
+        <span>
+          Click <strong>New connection</strong>, give it any name (e.g. Money Tracker), leave
+          capabilities as-is, then click <strong>Save</strong> and copy the{' '}
+          <strong>Access token</strong>.
+        </span>
+      </Step>
+
+      <Step n={2}>
+        <span>
+          Create a new Notion database (full-page or inline) with these{' '}
+          <strong>exact property names and types</strong>:
+        </span>
+        <div className="mt-1.5 grid grid-cols-2 gap-x-6 gap-y-0.5 font-mono text-xs">
+          {(
+            [
+              ['ID', 'Title'],
+              ['Amount', 'Number'],
+              ['Category', 'Select'],
+              ['Description', 'Text'],
+              ['Date', 'Date'],
+              ['Created At', 'Text'],
+            ] as [string, string][]
+          ).map(([prop, type]) => (
+            <Fragment key={prop}>
+              <Code>{prop}</Code>
+              <span className="text-zinc-400">{type}</span>
+            </Fragment>
+          ))}
+        </div>
+      </Step>
+
+      <Step n={3}>
+        <span>
+          Connect your integration to the database — open the database, click{' '}
+          <strong>⋯ → Connections → Connect to</strong> and pick your integration.
+        </span>
+      </Step>
+
+      <Step n={4}>
+        <span>
+          Copy the <strong>Database ID</strong> from the database URL:
+        </span>
+        <Code>notion.so/your-workspace/<strong>DATABASE_ID</strong>?v=…</Code>
+        <span className="text-xs text-zinc-400">
+          It&apos;s the 32-character segment before the <Code>?v=</Code> query string.
+        </span>
+      </Step>
+
+      <Step n={5}>
+        <p>
+          Go to{' '}
+          <Link href="/settings/connect" className="underline underline-offset-2">
+            Connect
+          </Link>
+          , enter your Database ID and Access token, then click <strong>Save</strong>.
+        </p>
+      </Step>
+
+      <Note>
+        Test by submitting one expense — a new row should appear in your Notion database within a
+        second.
+      </Note>
+    </div>
+  )
+}
+
 function SheetsSteps() {
   return (
     <div className="flex flex-col gap-5">
@@ -392,11 +486,21 @@ const SHEETS_CHECKLIST = [
   'Google account connected via "Connect Google Sheets"',
 ]
 
-type Tab = 'webhook' | 'sheets'
+const NOTION_CHECKLIST = [
+  'Notion account ready',
+  'Connections created at notion.so/developers/connections',
+  'Integration token (Access token) copied',
+  'Notion database created with required properties',
+  'Connections connected to the database',
+  'Database ID and token entered in Settings → Connect',
+]
+
+type Tab = 'webhook' | 'sheets' | 'notion'
 
 const TABS: { value: Tab; label: string }[] = [
   { value: 'webhook', label: INTEGRATION_LABELS.webhook },
   { value: 'sheets', label: INTEGRATION_LABELS.sheets },
+  { value: 'notion', label: INTEGRATION_LABELS.notion },
 ]
 
 /** Step-by-step setup guide for each integration, with a persistent checklist. */
@@ -423,7 +527,10 @@ export function SetupTabs() {
     })
   }
 
-  const activeChecklist = tab === 'sheets' ? SHEETS_CHECKLIST : WEBHOOK_CHECKLIST[platform]
+  const activeChecklist =
+    tab === 'sheets' ? SHEETS_CHECKLIST :
+    tab === 'notion' ? NOTION_CHECKLIST :
+    WEBHOOK_CHECKLIST[platform]
 
   return (
     <div className="flex flex-col gap-6">
@@ -447,7 +554,11 @@ export function SetupTabs() {
 
       {/* Steps */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-        {tab === 'webhook' ? (
+        {tab === 'notion' ? (
+          <NotionSteps />
+        ) : tab === 'sheets' ? (
+          <SheetsSteps />
+        ) : (
           <div className="flex flex-col gap-5">
             {/* Platform sub-tabs */}
             <div className="flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
@@ -471,8 +582,6 @@ export function SetupTabs() {
             {platform === 'pipedream' && <PipedreamSteps />}
             {platform === 'n8n' && <N8nSteps />}
           </div>
-        ) : (
-          <SheetsSteps />
         )}
       </div>
 

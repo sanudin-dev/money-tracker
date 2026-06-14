@@ -1,5 +1,5 @@
 /** The supported integration output channels. Extend this union to add future integrations. */
-export type IntegrationType = 'webhook' | 'sheets'
+export type IntegrationType = 'webhook' | 'sheets' | 'notion'
 
 export interface WebhookIntegration {
   webhookUrl: string
@@ -12,10 +12,16 @@ export interface SheetsIntegration {
   connectedEmail: string
 }
 
+export interface NotionIntegration {
+  databaseId: string
+  encryptedToken: string
+}
+
 export interface Config {
   currencyCode: string
   webhook?: WebhookIntegration
   sheets?: SheetsIntegration
+  notion?: NotionIntegration
 }
 
 export interface Expense {

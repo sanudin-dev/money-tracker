@@ -22,7 +22,7 @@ import { API } from '@/lib/constants'
 export function useSyncQueue() {
   const { config } = useConfig()
   const [pendingCount, setPendingCount] = useState(
-    () => getSyncQueue('webhook').length + getSyncQueue('sheets').length
+    () => getSyncQueue('webhook').length + getSyncQueue('sheets').length + getSyncQueue('notion').length
   )
   const [syncing, setSyncing] = useState(false)
   // syncingRef guards against concurrent processQueue calls (e.g. rapid 'online' events).
@@ -30,7 +30,7 @@ export function useSyncQueue() {
   const syncingRef = useRef(false)
 
   const refresh = useCallback(() => {
-    setPendingCount(getSyncQueue('webhook').length + getSyncQueue('sheets').length)
+    setPendingCount(getSyncQueue('webhook').length + getSyncQueue('sheets').length + getSyncQueue('notion').length)
   }, [])
 
   const processQueue = useCallback(async () => {
@@ -41,7 +41,11 @@ export function useSyncQueue() {
       config.sheets?.spreadsheetId && config.sheets?.refreshToken
         ? getSyncQueue('sheets').length
         : 0
-    if (webhookPending + sheetsPending === 0) return
+    const notionPending =
+      config.notion?.databaseId && config.notion?.encryptedToken
+        ? getSyncQueue('notion').length
+        : 0
+    if (webhookPending + sheetsPending + notionPending === 0) return
 
     syncingRef.current = true
     setSyncing(true)
@@ -101,7 +105,34 @@ export function useSyncQueue() {
       }
     }
 
-    await Promise.allSettled([processWebhookQueue(), processSheetsQueue()])
+    const processNotionQueue = async () => {
+      if (!config.notion?.databaseId || !config.notion?.encryptedToken) return
+      const notionConfig = config.notion
+      for (const id of getSyncQueue('notion')) {
+        try {
+          const expense = await getExpenseById(id)
+          if (!expense) {
+            dequeueSync(id, 'notion')
+            continue
+          }
+          const res = await fetch(API.NOTION, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...expense,
+              notionDatabaseId: notionConfig.databaseId,
+              notionToken: notionConfig.encryptedToken,
+            }),
+          })
+          const json = (await res.json()) as { ok: boolean }
+          if (json.ok) dequeueSync(id, 'notion')
+        } catch {
+          break
+        }
+      }
+    }
+
+    await Promise.allSettled([processWebhookQueue(), processSheetsQueue(), processNotionQueue()])
 
     syncingRef.current = false
     setSyncing(false)

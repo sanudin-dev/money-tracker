@@ -232,6 +232,8 @@ The API routes are **thin proxies only**. They:
 
 ## Next improvements
 
-- **Notion integration** — add as a third `IntegrationType` with database ID + integration token; write to a Notion database via the Notion API directly (same pattern as Sheets API).
+- **Edit/delete propagation (Notion)** — when the user edits or deletes an expense locally, also PATCH/archive the corresponding Notion page. Look up the page by querying the database filtered on the `ID` title property (the expense `id` stored there), then call `PATCH /v1/pages/{page_id}` to update or `{ archived: true }` to delete. No separate page-ID storage needed.
+- **Edit/delete propagation (Sheets)** — when the user edits or deletes an expense locally, find and update/remove the matching row in Google Sheets. Requires reading the sheet to locate the row by expense `id`, then using `batchUpdate` to overwrite or delete it.
+- **Incremental sync (performance)** — store `mt_last_notion_sync` / `mt_last_sheets_sync` timestamps in localStorage. On each "Sync now", only fetch remote records newer than the last sync timestamp, then update the timestamp on success. Keep a "Full sync" option for first-time setup or recovery. Prevents slow syncs after months or years of data accumulation.
 - **Receipt scan (camera → auto-fill)** — camera button on the Add expense form (file input with `capture="environment"`); use **Tesseract.js** (runs fully in-browser, no API key) to OCR the image, then parse the extracted text to pre-fill amount, date, and description. Gemini API would give better accuracy but requires a developer API key — cannot reuse the user's Google OAuth token since Gemini and Sheets API use different auth systems.
 - **Split bill calculator** — simple version only: a "÷ people" input next to the amount field that divides the total and fills the amount. No new data model needed. Full debt-tracking (who owes whom across sessions) is out of scope for a personal tracker.

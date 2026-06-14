@@ -7,8 +7,26 @@ import { getConfig, getExpenses } from '@/lib/storage'
 import { clearSyncQueue } from '@/lib/syncQueue'
 import { CircleCheckBigIcon } from 'lucide-react'
 
+function NotionIcon() {
+  return (
+    <svg viewBox="0 0 100 100" className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <path
+        d="M6.017 4.313l55.333-4.087c6.797-.583 8.543-.19 12.817 2.917l17.663 12.443c2.913 2.14 3.883 2.723 3.883 5.053v68.243c0 4.277-.777 6.807-6.990 7.193L24.970 99.967c-4.857.387-7.193-.193-9.72-3.300L4.410 83.023C1.690 79.337 .723 76.613.723 73.30V11.203C.723 7.510 1.500 4.700 6.017 4.313z"
+        fill="#fff"
+      />
+      <path
+        d="M61.350.227L6.017 4.313C1.500 4.700.723 7.510.723 11.203V73.30c0 3.313.967 6.037 3.687 9.723l10.840 13.644c2.527 3.107 4.863 3.687 9.720 3.300l63.753-3.883c6.213-.387 6.990-2.917 6.990-7.193V17.640c0-2.14-.78-2.780-3.31-4.543L74.167 3.143C69.893.037 68.147-.357 61.350.227zM25.833 19.443c-5.893.403-7.233.490-10.570-2.200L9.030 12.533c-.873-.777-.487-1.750 1.166-1.943l53.383-3.880c4.473-.387 6.797 1.167 8.543 2.527l9.123 6.617c.390.193 1.360 1.360 0 1.360l-55.027 3.300-.387-.07zM19.870 85.513V30.750c0-2.527.777-3.700 3.107-3.883l60.443-3.497c2.140-.193 3.107 1.167 3.107 3.690v54.18c0 2.527-.390 4.660-3.883 4.853l-57.723 3.300c-3.497.193-5.050-1.167-5.050-3.880zm56.990-52.607c.387 1.750 0 3.500-1.750 3.693l-2.913.577v42.773c-2.527 1.360-4.860 2.140-6.803 2.140-3.107 0-3.883-.973-6.21-3.883l-19.03-29.94v28.967l6.020 1.360s0 3.500-4.860 3.500l-13.400.777c-.390-.777 0-2.720 1.360-3.107l3.497-1.167V39.633l-4.860-.390c-.387-1.750.583-4.277 3.303-4.470l14.367-.973 19.807 30.323v-26.83l-5.050-.583c-.387-2.140 1.167-3.700 3.107-3.883l13.400-.777z"
+        fill="#000"
+        fillRule="evenodd"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
 type WebhookErrors = Partial<Record<'webhookUrl', string>>
 type SheetsErrors = Partial<Record<'spreadsheetId' | 'connection', string>>
+type NotionErrors = Partial<Record<'databaseId' | 'notionToken' | 'connection', string>>
 
 function GoogleIcon() {
   return (
@@ -48,6 +66,13 @@ export function ConfigForm() {
     failed: number
   } | null>(null)
 
+  // Notion draft
+  const [notionOverrides, setNotionOverrides] = useState<
+    Partial<{ databaseId: string; notionToken: string }>
+  >({})
+  const [notionErrors, setNotionErrors] = useState<NotionErrors>({})
+  const [notionConnecting, setNotionConnecting] = useState(false)
+
   // Sheets draft
   const [sheetsOverrides, setSheetsOverrides] = useState<Partial<{ spreadsheetId: string }>>({})
   const [sheetsErrors, setSheetsErrors] = useState<SheetsErrors>({})
@@ -65,6 +90,8 @@ export function ConfigForm() {
   const webhookUrl = webhookOverrides.webhookUrl ?? config.webhook?.webhookUrl ?? ''
   const webhookAppId = webhookOverrides.appId ?? config.webhook?.appId ?? ''
   const sheetsId = sheetsOverrides.spreadsheetId ?? config.sheets?.spreadsheetId ?? ''
+  const notionDatabaseId = notionOverrides.databaseId ?? config.notion?.databaseId ?? ''
+  const notionTokenDraft = notionOverrides.notionToken ?? ''
 
   // Process OAuth callback URL params on mount
   useEffect(() => {
@@ -114,6 +141,47 @@ export function ConfigForm() {
     setWebhookOverrides({})
     setWebhookSaved(false)
     setWebhookErrors({})
+  }
+
+  function handleDisconnectNotion() {
+    update({ notion: undefined })
+    clearSyncQueue('notion')
+    setNotionOverrides({})
+    setNotionErrors({})
+  }
+
+  async function handleSaveNotion(e: { preventDefault(): void }) {
+    e.preventDefault()
+    setNotionErrors({})
+
+    if (!notionDatabaseId) {
+      setNotionErrors({ databaseId: 'Database ID is required.' })
+      return
+    }
+    if (!notionTokenDraft) {
+      setNotionErrors({ notionToken: 'Integration token is required.' })
+      return
+    }
+
+    setNotionConnecting(true)
+    try {
+      const res = await fetch(API.NOTION_CONNECT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ databaseId: notionDatabaseId, notionToken: notionTokenDraft }),
+      })
+      const json = (await res.json()) as { ok: boolean; encryptedToken?: string; error?: string }
+      if (!json.ok || !json.encryptedToken) {
+        setNotionErrors({ connection: json.error ?? 'Could not connect to Notion.' })
+        return
+      }
+      update({ notion: { databaseId: notionDatabaseId, encryptedToken: json.encryptedToken } })
+      setNotionOverrides({})
+    } catch {
+      setNotionErrors({ connection: 'Could not reach the server.' })
+    } finally {
+      setNotionConnecting(false)
+    }
   }
 
   function handleSaveWebhook(e: { preventDefault(): void }) {
@@ -412,6 +480,118 @@ export function ConfigForm() {
               Use the{' '}
               <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button to sync
               expenses with your sheet — it checks for duplicates automatically.
+            </p>
+          </div>
+        )}
+      </form>
+
+      <div className="border-t border-zinc-200 dark:border-zinc-800" />
+
+      {/* ── Notion ── */}
+      <form onSubmit={handleSaveNotion} className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <NotionIcon />
+            Notion
+          </h2>
+          {config.notion && (
+            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+              Active
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="notionDatabaseId"
+            className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          >
+            Database ID
+          </label>
+          <input
+            id="notionDatabaseId"
+            type="text"
+            placeholder="8a3b2c1d4e5f6a7b8c9d0e1f2a3b4c5d"
+            value={notionDatabaseId}
+            onChange={(e) => {
+              setNotionOverrides((o) => ({ ...o, databaseId: e.target.value }))
+              setNotionErrors({})
+            }}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          />
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+            Found in the database URL: notion.so/…/
+            <strong className="text-zinc-600 dark:text-zinc-300">DATABASE_ID</strong>?v=…
+          </p>
+          {notionErrors.databaseId && (
+            <p className="text-xs text-red-500">{notionErrors.databaseId}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="notionToken"
+            className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          >
+            Integration Token
+          </label>
+          <input
+            id="notionToken"
+            type="password"
+            placeholder="secret_…"
+            value={notionTokenDraft}
+            onChange={(e) => {
+              setNotionOverrides((o) => ({ ...o, notionToken: e.target.value }))
+              setNotionErrors({})
+            }}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          />
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+            Create an internal integration at{' '}
+            <strong className="text-zinc-600 dark:text-zinc-300">notion.so/my-integrations</strong>{' '}
+            and share the database with it.
+          </p>
+          {notionErrors.notionToken && (
+            <p className="text-xs text-red-500">{notionErrors.notionToken}</p>
+          )}
+        </div>
+
+        {config.notion && (
+          <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 dark:border-green-800/40 dark:bg-green-900/20">
+            <CircleCheckBigIcon className="h-4 w-4 shrink-0 text-green-600 dark:text-green-400" />
+            <span className="text-sm text-green-800 dark:text-green-300">Notion connected</span>
+          </div>
+        )}
+
+        {notionErrors.connection && (
+          <p className="text-xs text-red-500">{notionErrors.connection}</p>
+        )}
+
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={notionConnecting}
+            className="flex-1 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            {notionConnecting ? 'Connecting…' : 'Save'}
+          </button>
+          {config.notion && (
+            <button
+              type="button"
+              onClick={handleDisconnectNotion}
+              className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Disconnect
+            </button>
+          )}
+        </div>
+
+        {config.notion && (
+          <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              Use the{' '}
+              <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button to sync
+              expenses with your Notion database — it checks for duplicates automatically.
             </p>
           </div>
         )}

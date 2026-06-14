@@ -75,11 +75,15 @@ export function HistoryClient() {
     })
   }, [])
 
-  // Reload local list when SyncBanner pulls new expenses from Sheets.
+  // Reload local list when SyncBanner pulls new expenses from Sheets or Notion.
   useEffect(() => {
     const handler = () => void getExpenses().then(setExpenses)
     window.addEventListener('mt:sheets-pull', handler)
-    return () => window.removeEventListener('mt:sheets-pull', handler)
+    window.addEventListener('mt:notion-pull', handler)
+    return () => {
+      window.removeEventListener('mt:sheets-pull', handler)
+      window.removeEventListener('mt:notion-pull', handler)
+    }
   }, [])
 
   function handleDelete(id: string) {
@@ -143,8 +147,8 @@ export function HistoryClient() {
               Delete expense?
             </p>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              This removes it from your local history only. If Google Sheets is connected, the row
-              stays in your spreadsheet — syncing will bring it back.
+              This removes it from your local history only. If a sync integration is connected, the
+              entry stays there — syncing will bring it back.
             </p>
             <div className="mt-5 flex gap-3">
               <button
