@@ -4,7 +4,19 @@ import { ConfigForm } from '@/components/ConfigForm'
 
 export const metadata = {
   title: 'Connect — Money Tracker',
-  description: 'Connect a webhook or Google Sheets to sync your expenses automatically.',
+  description: 'Connect a webhook, Google Sheets, or Notion to sync your expenses automatically.',
+  openGraph: {
+    title: 'Connect — Money Tracker',
+    description: 'Connect a webhook, Google Sheets, or Notion to sync your expenses automatically.',
+    url: '/settings/connect',
+    siteName: 'Money Tracker',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Connect — Money Tracker',
+    description: 'Connect a webhook, Google Sheets, or Notion to sync your expenses automatically.',
+  },
 }
 
 export default function ConnectPage() {

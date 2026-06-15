@@ -4,7 +4,21 @@ import { ListIcon } from 'lucide-react'
 export const metadata = {
   title: 'Money Tracker',
   description:
-    'Track personal expenses locally. Sync via webhook or Google Sheets API. Works offline.',
+    'Your local expense history. Browse by month, export to CSV, and sync with Google Sheets or Notion.',
+  openGraph: {
+    title: 'Money Tracker',
+    description:
+      'Your local expense history. Browse by month, export to CSV, and sync with Google Sheets or Notion.',
+    url: '/',
+    siteName: 'Money Tracker',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Money Tracker',
+    description:
+      'Your local expense history. Browse by month, export to CSV, and sync with Google Sheets or Notion.',
+  },
 }
 
 export default function HomePage() {

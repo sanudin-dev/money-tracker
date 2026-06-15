@@ -5,6 +5,18 @@ import { CirclePlusIcon } from 'lucide-react'
 export const metadata = {
   title: 'Add Expense — Money Tracker',
   description: 'Log a new expense. Saved locally and synced to your configured integrations.',
+  openGraph: {
+    title: 'Add Expense — Money Tracker',
+    description: 'Log a new expense. Saved locally and synced to your configured integrations.',
+    url: '/add',
+    siteName: 'Money Tracker',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Add Expense — Money Tracker',
+    description: 'Log a new expense. Saved locally and synced to your configured integrations.',
+  },
 }
 
 export default function AddPage() {

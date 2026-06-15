@@ -2,7 +2,7 @@
 
 ## Overview
 
-Local-first expense tracker. All user data lives in the browser (IndexedDB + localStorage). Integrations (Webhook, Sheets API) are independent output channels — not modes. Both can be active simultaneously. Server-side API routes are thin proxies only.
+Local-first expense tracker. All user data lives in the browser (IndexedDB + localStorage). Integrations (Webhook, Sheets API, Notion) are independent output channels — not modes. All can be active simultaneously. Server-side API routes are thin proxies only.
 
 ---
 
@@ -12,9 +12,10 @@ Local-first expense tracker. All user data lives in the browser (IndexedDB + loc
 2. Expense written to **IndexedDB** — always, regardless of integrations
 3. If Webhook configured → `POST /api/webhook` (forwards payload to webhook URL)
 4. If Sheets API configured → `POST /api/sheets` → creates `YYYY-MM` tab if needed → appends row
-5. History always reads from IndexedDB
-6. CSV export scoped to the currently viewed month (from IndexedDB)
-7. Offline: expense saved locally, API call queued per integration in `mt_sync_queue_webhook` / `mt_sync_queue_sheets`; auto-synced on reconnect
+5. If Notion configured → `POST /api/notion` → creates a new page in the Notion database
+6. History always reads from IndexedDB
+7. CSV export scoped to the currently viewed month (from IndexedDB)
+8. Offline: expense saved locally, API call queued per integration in `mt_sync_queue_webhook` / `mt_sync_queue_sheets` / `mt_sync_queue_notion`; auto-synced on reconnect
 
 ---
 
@@ -23,7 +24,7 @@ Local-first expense tracker. All user data lives in the browser (IndexedDB + loc
 ```ts
 // src/types/index.ts
 
-export type IntegrationType = 'webhook' | 'sheets'
+export type IntegrationType = 'webhook' | 'sheets' | 'notion'
 
 export interface WebhookIntegration {
   webhookUrl: string
@@ -36,10 +37,16 @@ export interface SheetsIntegration {
   connectedEmail: string // display only
 }
 
+export interface NotionIntegration {
+  databaseId: string
+  encryptedToken: string // AES-256-GCM encrypted blob; decrypted server-side on each request
+}
+
 export interface Config {
   currencyCode: string
   webhook?: WebhookIntegration
   sheets?: SheetsIntegration
+  notion?: NotionIntegration
 }
 
 export interface Expense {
@@ -62,6 +69,7 @@ Per-integration retry queues stored in localStorage:
 
 - `mt_sync_queue_webhook` — expense IDs that failed to push to the webhook
 - `mt_sync_queue_sheets` — expense IDs that failed to push to Sheets API
+- `mt_sync_queue_notion` — expense IDs that failed to push to Notion
 
 Each queue is processed independently on reconnect. A retry only hits the failed integration — a prior successful push is never duplicated.
 
@@ -75,16 +83,29 @@ Queue helpers in `src/lib/syncQueue.ts`:
 
 ## Bidirectional sync (Sheets API)
 
-`useSheetsSync` hook (called from `HistoryClient`) enables multi-device / multi-user sync via a shared spreadsheet.
+`useSheetsSync` hook enables multi-device / multi-user sync via a shared spreadsheet.
 
 1. `GET /api/sheets` — fetches all rows from the sheet
 2. Diff by `id` against IndexedDB:
    - **Pull**: rows in sheet but not locally → `addExpense()` (upsert — safe to call with existing IDs)
    - **Push**: local expenses not in sheet → `POST /api/sheets` sequentially (to respect rate limits)
 3. Failed pushes are enqueued to `mt_sync_queue_sheets` for retry by `useSyncQueue`
-4. `HistoryClient` reloads from IndexedDB when `pulled > 0`
+4. When `pulled > 0`, dispatches `mt:sheets-pull` event which `HistoryClient` listens to for reload
 
 The `id` field is the dedup key. No row is ever duplicated on either side.
+
+---
+
+## Bidirectional sync (Notion)
+
+`useNotionSync` hook works identically to `useSheetsSync` but targets the Notion database.
+
+1. `GET /api/notion` — fetches all pages from the database (paginated)
+2. Diff by `id` against IndexedDB:
+   - **Pull**: pages in Notion but not locally → `addExpense()`
+   - **Push**: local expenses not in Notion → `POST /api/notion` sequentially
+3. Failed pushes are enqueued to `mt_sync_queue_notion` for retry by `useSyncQueue`
+4. When `pulled > 0`, dispatches `mt:notion-pull` event for `HistoryClient` reload
 
 ---
 
@@ -100,6 +121,18 @@ The `id` field is the dedup key. No row is ever duplicated on either side.
 Requires in `.env.local`: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ENCRYPTION_KEY`
 
 Generate a key: `openssl rand -base64 32`
+
+---
+
+## Authentication flow (Notion)
+
+1. User enters their Notion Internal Integration Token (`ntn_…`) and database ID in `/settings/connect`
+2. ConfigForm POSTs `{ databaseId, notionToken }` to `POST /api/notion/connect`
+3. Server validates database access, **encrypts the token** with AES-256-GCM using `ENCRYPTION_KEY`, returns `{ ok, encryptedToken }`
+4. Client stores `{ databaseId, encryptedToken }` in `config.notion` via `useConfig`
+5. On every subsequent API call, the encrypted blob is sent to the server which decrypts it before use
+
+Requires in `.env.local`: `ENCRYPTION_KEY` (no Notion-specific env vars)
 
 ---
 

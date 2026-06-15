@@ -3,7 +3,19 @@ import { BookOpenIcon } from 'lucide-react'
 
 export const metadata = {
   title: 'Guide — Money Tracker',
-  description: 'Step-by-step setup guide for Webhook and Sheets API integrations.',
+  description: 'Step-by-step setup guide for Webhook, Sheets API, and Notion integrations.',
+  openGraph: {
+    title: 'Guide — Money Tracker',
+    description: 'Step-by-step setup guide for Webhook, Sheets API, and Notion integrations.',
+    url: '/settings/guide',
+    siteName: 'Money Tracker',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Guide — Money Tracker',
+    description: 'Step-by-step setup guide for Webhook, Sheets API, and Notion integrations.',
+  },
 }
 
 export default function GuidePage() {

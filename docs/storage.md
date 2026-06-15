@@ -14,6 +14,7 @@ Accessed via `useConfig` hook. Keys defined in `src/lib/constants.ts`.
 | `mt_guide_checklist`    | `Record<string, boolean>` | Persistent checkbox state on `/settings/guide` |
 | `mt_sync_queue_webhook` | `string[]`                | Expense IDs queued for offline webhook push    |
 | `mt_sync_queue_sheets`  | `string[]`                | Expense IDs queued for offline Sheets push     |
+| `mt_sync_queue_notion`  | `string[]`                | Expense IDs queued for offline Notion push     |
 
 ---
 

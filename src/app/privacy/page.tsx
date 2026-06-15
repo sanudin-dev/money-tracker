@@ -1,6 +1,18 @@
 export const metadata = {
   title: 'Privacy Policy — Money Tracker',
   description: 'How Money Tracker handles your data — stored on your device, never on a server.',
+  openGraph: {
+    title: 'Privacy Policy — Money Tracker',
+    description: 'How Money Tracker handles your data — stored on your device, never on a server.',
+    url: '/privacy',
+    siteName: 'Money Tracker',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Privacy Policy — Money Tracker',
+    description: 'How Money Tracker handles your data — stored on your device, never on a server.',
+  },
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

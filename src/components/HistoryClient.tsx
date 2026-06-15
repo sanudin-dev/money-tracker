@@ -60,6 +60,10 @@ function isCurrentMonth(m: MonthState): boolean {
 export function HistoryClient() {
   const { config } = useConfig()
   const currencyCode = config.currencyCode ?? detectDefaultCurrency()
+  const syncNames = [
+    config.sheets ? 'Google Sheets' : null,
+    config.notion ? 'Notion' : null,
+  ].filter((n): n is string => n !== null)
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedMonth, setSelectedMonth] = useState<MonthState>(currentMonthState)
@@ -147,8 +151,14 @@ export function HistoryClient() {
               Delete expense?
             </p>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              This removes it from your local history only. If a sync integration is connected, the
-              entry stays there — syncing will bring it back.
+              This removes it from your local history only.
+              {syncNames.length > 0 && (
+                <>
+                  {' '}
+                  {syncNames.join(' and ')} {syncNames.length > 1 ? 'are' : 'is'} connected, the
+                  entry stays there — syncing will bring it back.
+                </>
+              )}
             </p>
             <div className="mt-5 flex gap-3">
               <button

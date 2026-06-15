@@ -7,6 +7,18 @@ import { ArrowRightLeftIcon, BookOpenIcon, ChevronRightIcon, CodeXmlIcon, Link2I
 export const metadata = {
   title: 'Settings — Money Tracker',
   description: 'Manage your integrations, currency, and app settings.',
+  openGraph: {
+    title: 'Settings — Money Tracker',
+    description: 'Manage your integrations, currency, and app settings.',
+    url: '/settings',
+    siteName: 'Money Tracker',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Settings — Money Tracker',
+    description: 'Manage your integrations, currency, and app settings.',
+  },
 }
 
 type Row = {
@@ -21,7 +33,7 @@ const ROWS: Row[] = [
   {
     href: '/settings/connect',
     label: 'Connect',
-    description: 'Set up webhook or Sheets API credentials',
+    description: 'Set up webhook, Sheets API or Notion credentials',
     iconBg: 'bg-blue-500',
     icon: <Link2Icon className="h-5 w-5" />,
   },
@@ -42,7 +54,7 @@ const ROWS: Row[] = [
   {
     href: '/compare',
     label: 'Integrations',
-    description: 'See what Webhook and Sheets API each offer',
+    description: 'See what Webhook, Sheets API and Notion each offer',
     iconBg: 'bg-violet-500',
     icon: <ArrowRightLeftIcon className="h-5 w-5" />,
   },
@@ -84,7 +96,7 @@ export default function SettingsPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{row.label}</p>
-              <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">{row.description}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">{row.description}</p>
             </div>
             <ChevronRightIcon className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
           </Link>
@@ -109,7 +121,7 @@ export default function SettingsPage() {
           </span>
         </p>
         <p className="text-xs text-zinc-400 dark:text-zinc-500">
-          Local-first expense tracking. Sync via webhook or Google Sheets API.
+          Local-first expense tracking. Sync via webhook, Google Sheets API or Notion.
         </p>
         <div className="flex items-center gap-3">
           <Link

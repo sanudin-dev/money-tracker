@@ -2,6 +2,8 @@ import { GlobeOffIcon } from 'lucide-react'
 
 export const metadata = {
   title: 'Offline — Money Tracker',
+  description: 'You are offline. Your expenses are safe on your device and will sync when reconnected.',
+  robots: { index: false },
 }
 
 export default function OfflinePage() {

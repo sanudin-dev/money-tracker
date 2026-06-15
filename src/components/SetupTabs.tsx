@@ -540,7 +540,7 @@ export function SetupTabs() {
               key={value}
               type="button"
               onClick={() => setTab(value)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`flex flex-col flex-1 items-center justify-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
                 tab === value
                   ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100'
                   : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'

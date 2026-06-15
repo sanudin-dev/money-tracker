@@ -77,9 +77,60 @@ Decrypts the token with `ENCRYPTION_KEY` before use. Returns 401 if decryption f
 
 ---
 
+## POST /api/notion/connect
+
+Validates Notion credentials and returns an encrypted token for client-side storage.
+
+**Request body**:
+
+```ts
+{
+  databaseId: string,
+  notionToken: string   // plaintext Internal Integration Token (ntn_…)
+}
+```
+
+1. Calls `GET https://api.notion.com/v1/databases/{databaseId}` to verify access
+2. Encrypts the token with AES-256-GCM using `ENCRYPTION_KEY`
+3. Returns `{ ok: true, encryptedToken }` or `{ ok: false, error }` (401 if database access fails)
+
+Requires `ENCRYPTION_KEY` in `.env.local`. No Notion-specific environment variables.
+
+---
+
+## POST /api/notion
+
+Appends an expense as a new page in the user's Notion database.
+
+**Request body**:
+
+```ts
+{
+  ...Expense fields,
+  notionDatabaseId: string,
+  notionToken: string   // AES-256-GCM encrypted blob
+}
+```
+
+Decrypts the token, then calls `POST https://api.notion.com/v1/pages` with `Notion-Version: 2022-06-28`.
+
+---
+
+## GET /api/notion
+
+Returns all expense pages from the user's Notion database.
+
+**Query params**: `notionDatabaseId`, `notionToken` (encrypted blob)
+
+Returns `{ ok: true; expenses: Expense[] }` or `{ ok: false; error: string }`.
+
+Paginates through all Notion results (100 pages per request) and maps each page back to the `Expense` shape. Returns 401 if decryption fails.
+
+---
+
 ## Security model
 
 - Credentials travel in the request body (never stored in env vars on the server)
 - Zod validates all inputs before any external call is made
 - No credentials are logged at any point
-- The refresh token is encrypted with AES-256-GCM before being sent to the client; the server decrypts it on each request using `ENCRYPTION_KEY` — a plaintext token is never stored in the browser
+- The Sheets refresh token and Notion integration token are encrypted with AES-256-GCM before being sent to the client; the server decrypts them on each request using `ENCRYPTION_KEY` — plaintext tokens are never stored in the browser

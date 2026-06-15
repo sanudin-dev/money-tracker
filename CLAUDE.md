@@ -2,7 +2,7 @@
 
 ## What this project is
 
-A local-first Next.js PWA for tracking personal expenses. All data lives on-device (IndexedDB). Integrations (Webhook, Sheets API) are independent output channels — both can be active simultaneously, pushing every new expense to all configured destinations. No backend database.
+A local-first Next.js PWA for tracking personal expenses. All data lives on-device (IndexedDB). Integrations (Webhook, Sheets API, Notion) are independent output channels — all can be active simultaneously, pushing every new expense to all configured destinations. No backend database.
 
 ---
 
@@ -23,7 +23,7 @@ src/
   app/
     page.tsx                        # Home — expense history list
     add/page.tsx                    # Expense entry form
-    compare/page.tsx                # Integrations — webhook vs Sheets API comparison
+    compare/page.tsx                # Integrations — comparison across all three integrations
     install/page.tsx                # PWA install guide (Android / iOS / Desktop)
     dev/page.tsx                    # Developer notes — technical comparison + setup
     privacy/page.tsx                # Privacy policy
@@ -32,8 +32,10 @@ src/
       connect/page.tsx              # API credentials form
       guide/page.tsx                # Step-by-step setup guide
     api/
-      sheets/route.ts               # Server-side proxy for Sheets API calls
+      sheets/route.ts               # Server-side proxy for Sheets API calls (GET + POST)
       webhook/route.ts              # Server-side proxy to forward to webhook URL
+      notion/route.ts               # Server-side proxy for Notion API calls (GET + POST)
+      notion/connect/route.ts       # Validates Notion credentials and returns encrypted token
       auth/google/route.ts          # Redirects to Google OAuth consent
       auth/google/callback/route.ts # Exchanges code for tokens, stores via redirect
   components/
@@ -41,13 +43,14 @@ src/
     HistoryClient.tsx               # Expense list, month nav, edit/delete
     HistoryWrapper.tsx              # Thin wrapper that mounts HistoryClient
     EditExpenseModal.tsx            # Edit expense modal (centered on all screen sizes)
-    SyncBanner.tsx                  # Offline sync queue status banner
-    ConfigForm.tsx                  # Independent Webhook + Sheets API credential panels
-    IntegrationRow.tsx              # Active integrations status row (Settings page)
+    SyncBanner.tsx                  # Data sync banner — offline queue + bidirectional sync for Sheets + Notion
+    ConfigForm.tsx                  # Independent Webhook + Sheets API + Notion credential panels
+    IntegrationRow.tsx              # Active integration icons row (Settings page)
     CurrencyRow.tsx                 # Currency selector row (Settings page)
-    ModeStatusLine.tsx              # Exports IntegrationStatusLine — active integrations + manage link
+    ModeStatusLine.tsx              # Exports IntegrationStatusLine — active integration icons + manage link
     BottomNav.tsx                   # Mobile bottom tab navigation
-    SetupTabs.tsx                   # Webhook / Sheets setup guide with checklist
+    SetupTabs.tsx                   # Webhook / Sheets / Notion setup guide with checklist
+    icons.tsx                       # Brand SVG icons + INTEGRATION_META (label + Icon per IntegrationType)
     Providers.tsx                   # Wraps ConfigProvider
   lib/
     storage.ts                      # IndexedDB (expenses) + localStorage (config)
@@ -56,14 +59,17 @@ src/
     math.ts                         # evaluateAmount() — supports expressions like 12+8
     currency.ts                     # formatCurrency, getCurrencySymbol, etc.
     sheets.ts                       # Google Sheets API calls
+    notion.ts                       # Notion API calls (appendExpense, fetchExpenses, validateDatabase)
     schema.ts                       # Zod schemas for expense + config
     export.ts                       # CSV export logic
     constants.ts                    # API paths, localStorage keys, integration labels, syncQueueKey()
   hooks/
     useConfig.ts                    # Read/write config from localStorage
+    useSheetsSync.ts                # Bidirectional sync: IndexedDB ↔ Google Sheets
+    useNotionSync.ts                # Bidirectional sync: IndexedDB ↔ Notion
     useSyncQueue.ts                 # Per-integration offline queues: pendingCount, syncing, processQueue
   types/
-    index.ts                        # IntegrationType, Config, WebhookIntegration, SheetsIntegration, Expense types
+    index.ts                        # IntegrationType, Config, WebhookIntegration, SheetsIntegration, NotionIntegration, Expense types
 public/
   manifest.json
   icon-192.png
@@ -77,7 +83,7 @@ public/
 ```ts
 // src/types/index.ts
 
-export type IntegrationType = 'webhook' | 'sheets'
+export type IntegrationType = 'webhook' | 'sheets' | 'notion'
 
 export interface WebhookIntegration {
   webhookUrl: string
@@ -90,10 +96,16 @@ export interface SheetsIntegration {
   connectedEmail: string // display only
 }
 
+export interface NotionIntegration {
+  databaseId: string
+  encryptedToken: string // AES-256-GCM encrypted blob
+}
+
 export interface Config {
   currencyCode: string
   webhook?: WebhookIntegration // present = active
-  sheets?: SheetsIntegration // present = active
+  sheets?: SheetsIntegration  // present = active
+  notion?: NotionIntegration  // present = active
 }
 
 export interface Expense {
@@ -118,18 +130,20 @@ export interface Expense {
 
 ### Integrations (output channels)
 
-Integrations are independent. Both can be active simultaneously.
+Integrations are independent. All can be active simultaneously.
 
 - **Webhook**: `POST /api/webhook` with `{ ...expense, webhookUrl, appId? }` — automation platform handles the row
-- **Sheets API**: `POST /api/sheets` with `{ ...expense, sheetsSpreadsheetId, sheetsRefreshToken }` — direct Google Sheets write
+- **Sheets API**: `POST /api/sheets` with `{ ...expense, sheetsSpreadsheetId, sheetsRefreshToken }` — direct Google Sheets write; supports bidirectional sync via `useSheetsSync`
+- **Notion**: `POST /api/notion` with `{ ...expense, notionDatabaseId, notionToken }` — direct Notion database write; supports bidirectional sync via `useNotionSync`
 
 ### Offline handling
 
 - If offline when submitting, the expense ID is queued per integration:
   - `mt_sync_queue_webhook` for failed webhook pushes
   - `mt_sync_queue_sheets` for failed Sheets pushes
+  - `mt_sync_queue_notion` for failed Notion pushes
 - Each queue is retried independently on reconnect — a prior successful push is never duplicated
-- `SyncBanner` shows total pending count with a "Sync now" button
+- `SyncBanner` shows "Data sync" with a "Sync now" button; after sync shows per-integration results (icon + pulled/pushed counts)
 - `useSyncQueue` auto-processes on `window.online` and on mount
 
 ---
@@ -142,6 +156,7 @@ Integrations are independent. Both can be active simultaneously.
 // Key: 'mt_guide_checklist'      → Record<string, boolean>
 // Key: 'mt_sync_queue_webhook'   → string[]  (expense IDs pending webhook push)
 // Key: 'mt_sync_queue_sheets'    → string[]  (expense IDs pending Sheets push)
+// Key: 'mt_sync_queue_notion'    → string[]  (expense IDs pending Notion push)
 
 // IndexedDB — database: 'money-tracker' v1, store: 'expenses'
 // Indexes: 'date', 'createdAt'
@@ -179,7 +194,7 @@ The API routes are **thin proxies only**. They:
 ## Settings page layout
 
 - **`/settings`** — hub page: links to Connect, Guide, Install, Integrations, Developer. Inline rows for Integrations and Currency.
-- **`/settings/connect`** — `ConfigForm`: two independent panels (Webhook + Sheets API). Each saves/disconnects independently.
+- **`/settings/connect`** — `ConfigForm`: three independent panels (Webhook + Sheets API + Notion). Each saves/disconnects independently.
 - **`/settings/guide`** — `SetupTabs`: step-by-step guide per integration with a persistent checklist
 
 ---
@@ -196,12 +211,11 @@ The API routes are **thin proxies only**. They:
 
 ## History page behaviour (`/`)
 
-- `SyncBanner` at the top shows offline queue status
-- **Sheets sync row** (shown when Sheets is connected) — "Sync now" button triggers bidirectional sync via `useSheetsSync`; result shows "↓ N pulled · ↑ N pushed" or "Up to date"
+- `SyncBanner` at top — "Sync now" button flushes offline queues and triggers bidirectional sync for each connected integration (Sheets, Notion); results shown as icon + "↓ N pulled · ↑ N pushed" or "Up to date"
 - Month navigator to browse past months
 - Category accordion — click total to expand breakdown
 - Expense rows grouped by date with per-day total
-- Three-dot menu per row → **Edit** (opens `EditExpenseModal`) or **Delete** (confirmation — warns that syncing will restore from Sheets)
+- Three-dot menu per row → **Edit** (opens `EditExpenseModal`) or **Delete** (confirmation — warns that syncing will restore deleted entries from connected integrations)
 - Always reads from IndexedDB (no remote fetch)
 - CSV export exports the currently viewed month only (not all-time)
 
@@ -232,8 +246,8 @@ The API routes are **thin proxies only**. They:
 
 ## Next improvements
 
-- **Edit/delete propagation (Notion)** — when the user edits or deletes an expense locally, also PATCH/archive the corresponding Notion page. Look up the page by querying the database filtered on the `ID` title property (the expense `id` stored there), then call `PATCH /v1/pages/{page_id}` to update or `{ archived: true }` to delete. No separate page-ID storage needed.
 - **Edit/delete propagation (Sheets)** — when the user edits or deletes an expense locally, find and update/remove the matching row in Google Sheets. Requires reading the sheet to locate the row by expense `id`, then using `batchUpdate` to overwrite or delete it.
-- **Incremental sync (performance)** — store `mt_last_notion_sync` / `mt_last_sheets_sync` timestamps in localStorage. On each "Sync now", only fetch remote records newer than the last sync timestamp, then update the timestamp on success. Keep a "Full sync" option for first-time setup or recovery. Prevents slow syncs after months or years of data accumulation.
+- **Edit/delete propagation (Notion)** — when the user edits or deletes an expense locally, also PATCH/archive the corresponding Notion page. Look up the page by querying the database filtered on the `ID` title property (the expense `id` stored there), then call `PATCH /v1/pages/{page_id}` to update or `{ archived: true }` to delete. No separate page-ID storage needed.
+- **Incremental sync (performance)** — store `mt_last_sheets_sync` / `mt_last_notion_sync` timestamps in localStorage. On each "Sync now", only fetch remote records newer than the last sync timestamp, then update the timestamp on success. Keep a "Full sync" option for first-time setup or recovery. Prevents slow syncs after months or years of data accumulation.
 - **Receipt scan (camera → auto-fill)** — camera button on the Add expense form (file input with `capture="environment"`); use **Tesseract.js** (runs fully in-browser, no API key) to OCR the image, then parse the extracted text to pre-fill amount, date, and description. Gemini API would give better accuracy but requires a developer API key — cannot reuse the user's Google OAuth token since Gemini and Sheets API use different auth systems.
 - **Split bill calculator** — simple version only: a "÷ people" input next to the amount field that divides the total and fills the amount. No new data model needed. Full debt-tracking (who owes whom across sessions) is out of scope for a personal tracker.
