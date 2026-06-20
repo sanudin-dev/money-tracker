@@ -1,6 +1,6 @@
 'use client'
 
-import type { Dispatch, SetStateAction } from 'react'
+import { useSyncExternalStore, type Dispatch, type SetStateAction } from 'react'
 import { ChevronDownIcon, Grid2X2Icon } from 'lucide-react'
 import { CATEGORIES, CATEGORY_LABELS } from '@/lib/categories'
 
@@ -40,6 +40,12 @@ export function ExpenseFields({
   amountPreview,
   pastDescriptions,
 }: Props) {
+  const maxDate = useSyncExternalStore(
+    () => () => {},
+    () => new Date().toLocaleDateString('en-CA'),
+    () => undefined
+  )
+
   return (
     <>
       <div className="flex flex-col gap-1.5">
@@ -141,7 +147,7 @@ export function ExpenseFields({
           id="date"
           type="date"
           value={date}
-          max={new Date().toLocaleDateString('en-CA')}
+          max={maxDate}
           onChange={(e) => setDate(e.target.value)}
           className="w-full appearance-none rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
         />
