@@ -22,7 +22,8 @@ import { API } from '@/lib/constants'
 export function useSyncQueue() {
   const { config } = useConfig()
   const [pendingCount, setPendingCount] = useState(
-    () => getSyncQueue('webhook').length + getSyncQueue('sheets').length + getSyncQueue('notion').length
+    () =>
+      getSyncQueue('webhook').length + getSyncQueue('sheets').length + getSyncQueue('notion').length
   )
   const [syncing, setSyncing] = useState(false)
   // syncingRef guards against concurrent processQueue calls (e.g. rapid 'online' events).
@@ -30,7 +31,9 @@ export function useSyncQueue() {
   const syncingRef = useRef(false)
 
   const refresh = useCallback(() => {
-    setPendingCount(getSyncQueue('webhook').length + getSyncQueue('sheets').length + getSyncQueue('notion').length)
+    setPendingCount(
+      getSyncQueue('webhook').length + getSyncQueue('sheets').length + getSyncQueue('notion').length
+    )
   }, [])
 
   const processQueue = useCallback(async () => {
@@ -42,9 +45,7 @@ export function useSyncQueue() {
         ? getSyncQueue('sheets').length
         : 0
     const notionPending =
-      config.notion?.databaseId && config.notion?.encryptedToken
-        ? getSyncQueue('notion').length
-        : 0
+      config.notion?.databaseId && config.notion?.encryptedToken ? getSyncQueue('notion').length : 0
     if (webhookPending + sheetsPending + notionPending === 0) return
 
     syncingRef.current = true

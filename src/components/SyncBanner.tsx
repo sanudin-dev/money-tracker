@@ -26,8 +26,18 @@ function ErrorLine({ msg, href }: { msg: string; href?: string }) {
 export function SyncBanner() {
   const { config } = useConfig()
   const { pendingCount, syncing: queueSyncing, processQueue } = useSyncQueue()
-  const { syncing: sheetsSyncing, sync: syncSheets, result: sheetsResult, error: sheetsError } = useSheetsSync()
-  const { syncing: notionSyncing, sync: syncNotion, result: notionResult, error: notionError } = useNotionSync()
+  const {
+    syncing: sheetsSyncing,
+    sync: syncSheets,
+    result: sheetsResult,
+    error: sheetsError,
+  } = useSheetsSync()
+  const {
+    syncing: notionSyncing,
+    sync: syncNotion,
+    result: notionResult,
+    error: notionError,
+  } = useNotionSync()
 
   const sheetsConnected = !!config.sheets?.spreadsheetId && !!config.sheets?.refreshToken
   const notionConnected = !!config.notion?.databaseId && !!config.notion?.encryptedToken
@@ -51,12 +61,20 @@ export function SyncBanner() {
 
   if (sheetsError) {
     statusLines.push(
-      <ErrorLine key="sheets-err" msg={sheetsError} href={/reconnect/i.test(sheetsError) ? '/settings/connect' : undefined} />
+      <ErrorLine
+        key="sheets-err"
+        msg={sheetsError}
+        href={/reconnect/i.test(sheetsError) ? '/settings/connect' : undefined}
+      />
     )
   }
   if (notionError) {
     statusLines.push(
-      <ErrorLine key="notion-err" msg={notionError} href={/reconnect/i.test(notionError) ? '/settings/connect' : undefined} />
+      <ErrorLine
+        key="notion-err"
+        msg={notionError}
+        href={/reconnect/i.test(notionError) ? '/settings/connect' : undefined}
+      />
     )
   }
   if (sheetsResult) {
@@ -79,7 +97,9 @@ export function SyncBanner() {
   }
   if (statusLines.length === 0 && pendingCount > 0) {
     statusLines.push(
-      <span key="pending" className="text-zinc-400 dark:text-zinc-500">{pendingCount} pending</span>
+      <span key="pending" className="text-zinc-400 dark:text-zinc-500">
+        {pendingCount} pending
+      </span>
     )
   }
 
@@ -97,9 +117,7 @@ export function SyncBanner() {
         </button>
       </div>
       {!syncing && statusLines.length > 0 && (
-        <div className="mt-1 flex flex-col gap-0.5">
-          {statusLines}
-        </div>
+        <div className="mt-1 flex flex-col gap-0.5">{statusLines}</div>
       )}
     </div>
   )

@@ -25,7 +25,7 @@ export function IntegrationRow() {
               const { label, Icon } = INTEGRATION_META[type]
               return (
                 <span key={type} title={label}>
-                  <Icon className="h-4 w-4"/>
+                  <Icon className="h-4 w-4" />
                 </span>
               )
             })}

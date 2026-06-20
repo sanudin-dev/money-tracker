@@ -1,6 +1,6 @@
 'use client'
 
-import { TabletSmartphoneIcon } from 'lucide-react';
+import { TabletSmartphoneIcon } from 'lucide-react'
 import { useState } from 'react'
 
 type Platform = 'android' | 'ios' | 'desktop'

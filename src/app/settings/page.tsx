@@ -2,7 +2,15 @@ import Link from 'next/link'
 import { CurrencyRow } from '@/components/CurrencyRow'
 import { IntegrationRow } from '@/components/IntegrationRow'
 import { ThemeRow } from '@/components/ThemeRow'
-import { ArrowRightLeftIcon, BookOpenIcon, ChevronRightIcon, CodeXmlIcon, Link2Icon, TabletSmartphoneIcon, SettingsIcon } from 'lucide-react'
+import {
+  ArrowRightLeftIcon,
+  BookOpenIcon,
+  ChevronRightIcon,
+  CodeXmlIcon,
+  Link2Icon,
+  TabletSmartphoneIcon,
+  SettingsIcon,
+} from 'lucide-react'
 
 export const metadata = {
   title: 'Settings — Money Tracker',

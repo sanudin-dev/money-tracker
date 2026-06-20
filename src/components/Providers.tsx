@@ -14,7 +14,10 @@ export function Providers({ children }: { children: ReactNode }) {
   // the initial page open which that mechanism misses.
   useEffect(() => {
     if (!('caches' in window)) return
-    caches.open('pages').then((cache) => cache.add(pathname)).catch(() => {})
+    caches
+      .open('pages')
+      .then((cache) => cache.add(pathname))
+      .catch(() => {})
   }, [pathname])
 
   return (

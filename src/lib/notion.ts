@@ -44,7 +44,8 @@ export async function validateDatabase(databaseId: string, token: string): Promi
   const data: unknown = await res.json()
   if (!res.ok) {
     if (isNotionError(data)) {
-      if (data.code === 'object_not_found') throw new Error('Database not found — check the ID and ensure the integration has access.')
+      if (data.code === 'object_not_found')
+        throw new Error('Database not found — check the ID and ensure the integration has access.')
       if (data.code === 'unauthorized') throw new Error('Invalid integration token.')
       throw new Error(data.message)
     }
@@ -104,7 +105,11 @@ export async function fetchExpenses(databaseId: string, token: string): Promise<
  * Requires the database to have these properties: ID (title), Amount (number),
  * Category (select), Description (rich text), Date (date), Created At (rich text).
  */
-export async function appendExpense(databaseId: string, token: string, expense: Expense): Promise<void> {
+export async function appendExpense(
+  databaseId: string,
+  token: string,
+  expense: Expense
+): Promise<void> {
   const res = await fetch(`${NOTION_API}/pages`, {
     method: 'POST',
     headers: notionHeaders(token),

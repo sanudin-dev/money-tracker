@@ -104,8 +104,8 @@ export interface NotionIntegration {
 export interface Config {
   currencyCode: string
   webhook?: WebhookIntegration // present = active
-  sheets?: SheetsIntegration  // present = active
-  notion?: NotionIntegration  // present = active
+  sheets?: SheetsIntegration // present = active
+  notion?: NotionIntegration // present = active
 }
 
 export interface Expense {

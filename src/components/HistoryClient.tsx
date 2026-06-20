@@ -10,7 +10,14 @@ import { SyncBanner } from '@/components/SyncBanner'
 import { exportToCsv } from '@/lib/export'
 import { CATEGORIES } from '@/lib/categories'
 import type { Expense } from '@/types'
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, EllipsisIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EllipsisIcon,
+  PencilIcon,
+  Trash2Icon,
+} from 'lucide-react'
 
 type MonthState = { year: number; month: number }
 
@@ -224,7 +231,9 @@ export function HistoryClient() {
                   {formatCurrency(monthTotal, currencyCode)}
                 </span>
               </span>
-              <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform ${categoryOpen ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon
+                className={`h-3.5 w-3.5 transition-transform ${categoryOpen ? 'rotate-180' : ''}`}
+              />
             </button>
             <button
               type="button"
@@ -249,7 +258,11 @@ export function HistoryClient() {
                   <div className="flex items-center gap-2">
                     {(() => {
                       const meta = CATEGORIES.find((c) => c.label === cat)
-                      return <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${meta?.iconBg ?? 'bg-zinc-300 dark:bg-zinc-600'}`} />
+                      return (
+                        <span
+                          className={`h-2.5 w-2.5 shrink-0 rounded-full ${meta?.iconBg ?? 'bg-zinc-300 dark:bg-zinc-600'}`}
+                        />
+                      )
                     })()}
                     <span className="text-sm text-zinc-600 dark:text-zinc-400">{cat}</span>
                   </div>
@@ -304,7 +317,9 @@ export function HistoryClient() {
                       {(() => {
                         const meta = CATEGORIES.find((c) => c.label === expense.category)
                         return meta ? (
-                          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white ${meta.iconBg}`}>
+                          <div
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white ${meta.iconBg}`}
+                          >
                             <meta.icon className="h-5 w-5" />
                           </div>
                         ) : null

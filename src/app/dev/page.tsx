@@ -1,11 +1,12 @@
-import { CodeXmlIcon } from "lucide-react";
+import { CodeXmlIcon } from 'lucide-react'
 
 export const metadata = {
   title: 'Developer — Money Tracker',
   description: 'Technical comparison and one-time server setup guide for deploying Money Tracker.',
   openGraph: {
     title: 'Developer — Money Tracker',
-    description: 'Technical comparison and one-time server setup guide for deploying Money Tracker.',
+    description:
+      'Technical comparison and one-time server setup guide for deploying Money Tracker.',
     url: '/dev',
     siteName: 'Money Tracker',
     type: 'website',
@@ -13,7 +14,8 @@ export const metadata = {
   twitter: {
     card: 'summary',
     title: 'Developer — Money Tracker',
-    description: 'Technical comparison and one-time server setup guide for deploying Money Tracker.',
+    description:
+      'Technical comparison and one-time server setup guide for deploying Money Tracker.',
   },
 }
 
@@ -32,7 +34,8 @@ const COMPARISON_ROWS: Row[] = [
     label: 'Server credentials',
     webhook: 'None',
     sheets: 'GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ENCRYPTION_KEY (never exposed to the client)',
-    notion: 'ENCRYPTION_KEY only (no Notion-specific env vars — the integration token is user-supplied)',
+    notion:
+      'ENCRYPTION_KEY only (no Notion-specific env vars — the integration token is user-supplied)',
   },
   {
     label: 'Write path',
@@ -76,7 +79,7 @@ const COMPARISON_ROWS: Row[] = [
     webhook:
       'Yes — automation platform; swap the destination (Notion, Airtable, Slack) with zero code changes',
     sheets: 'No — direct Google API; you own the entire write path',
-    notion: 'No — direct Notion API; data lands in the user\'s own workspace',
+    notion: "No — direct Notion API; data lands in the user's own workspace",
   },
   {
     label: 'Extensibility',
@@ -205,12 +208,11 @@ export default function DevPage() {
         </p>
         <p className="mt-2">
           <strong className="text-zinc-700 dark:text-zinc-300">Notion</strong> — no OAuth flow
-          required. The user creates a Notion Internal Integration, copies the token
-          (<Code>ntn_…</Code>), and pastes it along with the database ID in{' '}
-          <Code>/settings/connect</Code>. ConfigForm POSTs these to{' '}
-          <Code>/api/notion/connect</Code>, which validates database access and encrypts the token
-          with <Code>ENCRYPTION_KEY</Code> before returning it to the client. The plaintext token
-          is never stored in the browser.
+          required. The user creates a Notion Internal Integration, copies the token (
+          <Code>ntn_…</Code>), and pastes it along with the database ID in{' '}
+          <Code>/settings/connect</Code>. ConfigForm POSTs these to <Code>/api/notion/connect</Code>
+          , which validates database access and encrypts the token with <Code>ENCRYPTION_KEY</Code>{' '}
+          before returning it to the client. The plaintext token is never stored in the browser.
         </p>
         <p className="mt-2">
           <strong className="text-zinc-700 dark:text-zinc-300">Bidirectional sync</strong> — both{' '}
@@ -374,9 +376,9 @@ export default function DevPage() {
                   per-user step documented in the in-app guide.
                 </span>
                 <Note>
-                  The integration token (<Code>ntn_…</Code>) is validated and encrypted
-                  server-side when the user saves their credentials. The plaintext token never
-                  persists in the browser.
+                  The integration token (<Code>ntn_…</Code>) is validated and encrypted server-side
+                  when the user saves their credentials. The plaintext token never persists in the
+                  browser.
                 </Note>
               </Step>
             </div>
@@ -400,13 +402,13 @@ export default function DevPage() {
         </p>
         <p className="mt-2">
           The Notion integration token follows the same encryption model. The user&apos;s plaintext
-          token is sent once to <Code>/api/notion/connect</Code> for validation; the server
-          encrypts it and returns the blob to the client. All subsequent calls send the encrypted
-          blob, which the server decrypts on the fly.
+          token is sent once to <Code>/api/notion/connect</Code> for validation; the server encrypts
+          it and returns the blob to the client. All subsequent calls send the encrypted blob, which
+          the server decrypts on the fly.
         </p>
         <p className="mt-2">
-          The webhook URL is stored in <Code>localStorage</Code> and sent in the request body. It
-          is a shared secret — anyone who obtains it can POST to the webhook. The app never logs any
+          The webhook URL is stored in <Code>localStorage</Code> and sent in the request body. It is
+          a shared secret — anyone who obtains it can POST to the webhook. The app never logs any
           credential server-side.
         </p>
       </Section>

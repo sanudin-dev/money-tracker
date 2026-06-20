@@ -9,7 +9,11 @@ const _noop = () => () => {}
 /** Appearance selector that persists the user's theme preference to localStorage. */
 export function ThemeRow() {
   const { theme, setTheme } = useTheme()
-  const mounted = useSyncExternalStore(_noop, () => true, () => false)
+  const mounted = useSyncExternalStore(
+    _noop,
+    () => true,
+    () => false
+  )
 
   return (
     <div className="flex items-center justify-between px-4 py-3.5">

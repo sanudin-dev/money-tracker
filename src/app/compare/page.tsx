@@ -1,4 +1,4 @@
-import { ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft } from 'lucide-react'
 
 type Row = { label: string; webhook: string; sheets: string; notion: string }
 
@@ -78,8 +78,7 @@ const ROWS: Row[] = [
     webhook: 'Tied to the automation platform — moving means rebuilding the workflow elsewhere',
     sheets:
       'Only depends on Google Sheets API — no third-party automation platform in the write path',
-    notion:
-      'Only depends on Notion API — data lands in your own Notion workspace',
+    notion: 'Only depends on Notion API — data lands in your own Notion workspace',
   },
   {
     label: 'Offline',
@@ -203,7 +202,8 @@ export default function ComparePage() {
         <p>
           Notion gives you a structured database inside your existing Notion workspace — no Google
           account needed. Set up a Notion integration, share your database with it, paste the token
-          and database ID in Connect, and expenses are written directly to Notion on every submission.
+          and database ID in Connect, and expenses are written directly to Notion on every
+          submission.
         </p>
         <p className="mt-2">
           Like Sheets, Notion supports{' '}

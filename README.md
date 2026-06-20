@@ -31,12 +31,12 @@ Track personal expenses locally with optional sync to a webhook (Zapier, Make, P
 
 All integrations are optional and independent — enable none, one, or any combination at the same time.
 
-|              | Webhook                                                                              | Sheets API                        | Notion                                |
-| ------------ | ------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------------- |
-| Setup        | ~5 min                                                                               | ~2 min                            | ~2 min                                |
-| What it does | Sends each expense to any webhook-connected app (Zapier, Make, Pipedream, n8n, etc.) | Writes directly to a Google Sheet | Writes directly to a Notion database  |
-| Multi-device | Not supported                                                                        | Yes — bidirectional sync          | Yes — bidirectional sync              |
-| Cost         | Depends on platform                                                                  | Free                              | Free                                  |
+|              | Webhook                                                                              | Sheets API                        | Notion                               |
+| ------------ | ------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------------ |
+| Setup        | ~5 min                                                                               | ~2 min                            | ~2 min                               |
+| What it does | Sends each expense to any webhook-connected app (Zapier, Make, Pipedream, n8n, etc.) | Writes directly to a Google Sheet | Writes directly to a Notion database |
+| Multi-device | Not supported                                                                        | Yes — bidirectional sync          | Yes — bidirectional sync             |
+| Cost         | Depends on platform                                                                  | Free                              | Free                                 |
 
 See the [Integrations page](https://mt.sanudin.dev/compare) for details.
 
@@ -53,6 +53,7 @@ Next.js 16 App Router · TypeScript · Tailwind CSS · IndexedDB (`idb`) · Zod 
 Money Tracker is **local-first** — all expense data lives in IndexedDB on the user's device. The app works fully offline; the network is only ever used for optional sync.
 
 **Data flow:**
+
 1. Every expense is written to IndexedDB before any network call is made — data is never lost even if sync fails
 2. History always reads from IndexedDB — no remote fetch required
 3. On submit, the app fires sync calls to all active integrations in parallel (webhook, Sheets API and/or Notion)

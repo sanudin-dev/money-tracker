@@ -444,9 +444,8 @@ export function ConfigForm() {
         {config.sheets?.refreshToken && (
           <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Use the{' '}
-              <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button to sync
-              expenses with your sheet — it checks for duplicates automatically.
+              Use the <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button
+              to sync expenses with your sheet — it checks for duplicates automatically.
             </p>
           </div>
         )}
@@ -556,9 +555,8 @@ export function ConfigForm() {
         {config.notion && (
           <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/50">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Use the{' '}
-              <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button to sync
-              expenses with your Notion database — it checks for duplicates automatically.
+              Use the <strong className="text-zinc-700 dark:text-zinc-300">Sync now</strong> button
+              to sync expenses with your Notion database — it checks for duplicates automatically.
             </p>
           </div>
         )}

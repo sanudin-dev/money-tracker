@@ -50,11 +50,18 @@ export function ExpenseForm() {
     })
   }, [])
 
-  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
   const currencyCode = mounted ? (config.currencyCode ?? detectDefaultCurrency()) : ''
   const fractionDigits = useMemo(() => getCurrencyFractionDigits(currencyCode), [currencyCode])
-  const currencySymbol = useMemo(() => (currencyCode ? getCurrencySymbol(currencyCode) : ''), [currencyCode])
+  const currencySymbol = useMemo(
+    () => (currencyCode ? getCurrencySymbol(currencyCode) : ''),
+    [currencyCode]
+  )
   const amountPlaceholder = fractionDigits === 0 ? '0 or 50000 + 25000' : '0.00 or 12 + 8.50'
 
   const amountPreview = useMemo(() => {
@@ -198,7 +205,11 @@ export function ExpenseForm() {
     }
 
     setSubmitting(true)
-    const [webhookResult, sheetsResult, notionResult] = await Promise.all([pushWebhook(), pushSheets(), pushNotion()])
+    const [webhookResult, sheetsResult, notionResult] = await Promise.all([
+      pushWebhook(),
+      pushSheets(),
+      pushNotion(),
+    ])
     setSubmitting(false)
 
     const allOk = webhookResult.ok && sheetsResult.ok && notionResult.ok
@@ -253,7 +264,10 @@ export function ExpenseForm() {
         >
           {status.message}
           {typeof status.message === 'string' && /reconnect/i.test(status.message) && (
-            <Link href="/settings/connect" className="ml-1 font-medium underline underline-offset-2">
+            <Link
+              href="/settings/connect"
+              className="ml-1 font-medium underline underline-offset-2"
+            >
               Go to Connect →
             </Link>
           )}

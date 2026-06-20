@@ -99,7 +99,9 @@ export function ExpenseFields({
             {(() => {
               const meta = CATEGORIES.find((c) => c.label === category)
               return meta ? (
-                <span className={`flex h-6 w-6 items-center justify-center rounded-md text-white ${meta.iconBg}`}>
+                <span
+                  className={`flex h-6 w-6 items-center justify-center rounded-md text-white ${meta.iconBg}`}
+                >
                   <meta.icon className="h-4 w-4" />
                 </span>
               ) : (
@@ -147,7 +149,10 @@ export function ExpenseFields({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="description" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        <label
+          htmlFor="description"
+          className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        >
           Description <span className="font-normal text-zinc-400">(optional)</span>
         </label>
         <input

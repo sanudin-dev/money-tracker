@@ -323,7 +323,8 @@ function NotionSteps() {
             <strong>Go to developer portal</strong>
           </li>
           <li>
-            <strong>Desktop app (alternative):</strong> open any database → <strong>⋯ → Connections → Manage connections</strong> → click{' '}
+            <strong>Desktop app (alternative):</strong> open any database →{' '}
+            <strong>⋯ → Connections → Manage connections</strong> → click{' '}
             <strong>Go to developer portal</strong>
           </li>
         </ul>
@@ -369,7 +370,9 @@ function NotionSteps() {
         <span>
           Copy the <strong>Database ID</strong> from the database URL:
         </span>
-        <Code>notion.so/your-workspace/<strong>DATABASE_ID</strong>?v=…</Code>
+        <Code>
+          notion.so/your-workspace/<strong>DATABASE_ID</strong>?v=…
+        </Code>
         <span className="text-xs text-zinc-400">
           It&apos;s the 32-character segment before the <Code>?v=</Code> query string.
         </span>
@@ -525,9 +528,11 @@ export function SetupTabs() {
   }
 
   const activeChecklist =
-    tab === 'sheets' ? SHEETS_CHECKLIST :
-    tab === 'notion' ? NOTION_CHECKLIST :
-    WEBHOOK_CHECKLIST[platform]
+    tab === 'sheets'
+      ? SHEETS_CHECKLIST
+      : tab === 'notion'
+        ? NOTION_CHECKLIST
+        : WEBHOOK_CHECKLIST[platform]
 
   return (
     <div className="flex flex-col gap-6">
